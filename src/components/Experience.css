@@ -1,0 +1,941 @@
+/* Section Education + Experience + statistik folder — gaya referensi:
+   timeline bernomor, kaca tipis, kontur topografi, folder 3D. */
+
+.experience-section {
+  isolation: isolate;
+  padding: 70px 24px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============ Kontur topografi (dekoratif) ============ */
+.experience-contours {
+  z-index: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  opacity: 0.62;
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.experience-container {
+  z-index: 1;
+  width: min(100%, 1200px);
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ============ Timeline ============ */
+.experience-timeline {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(32px, 5vw, 76px);
+  display: grid;
+}
+/* Hanya Education (Experience belum ada datanya) → satu kolom di tengah */
+.experience-timeline--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 660px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.timeline-title {
+  color: #f4f7fb;
+  letter-spacing: -0.025em;
+  margin: 0 0 26px;
+  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+  font-weight: 700;
+}
+
+.timeline-list {
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+.timeline-item {
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 18px;
+  cursor: pointer;
+  display: grid;
+}
+/* Efek hover = indikator visual saja (tidak mengubah state aktif) */
+.timeline-item:hover .timeline-panel {
+  background: #ffffff0a;
+  border-color: #ffffff1c;
+}
+.timeline-item:active .timeline-panel {
+  background: #ffffff12;
+}
+
+.timeline-rail {
+  justify-content: center;
+  padding-top: 10px;
+  display: flex;
+  position: relative;
+}
+.timeline-item:not(:last-child) .timeline-rail::after {
+  content: '';
+  background: linear-gradient(180deg, #ffffff29, #ffffff08);
+  width: 1px;
+  position: absolute;
+  top: 50px;
+  bottom: -22px;
+  left: 50%;
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+.timeline-item:not(.is-active):not(:last-child) .timeline-rail::after {
+  opacity: 0.5;
+}
+
+/* Nomor urut — bisa diklik / difokus keyboard */
+.timeline-index {
+  color: #8992a2;
+  background: #ffffff08;
+  border: 1px solid #ffffff1a;
+  border-radius: 50%;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  transition:
+    color 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.timeline-index:hover {
+  color: #dbe6f5;
+  background: #ffffff14;
+  border-color: #ffffff2e;
+  transform: scale(1.06);
+}
+.timeline-index:focus-visible {
+  outline: 2px solid #7cc4ff;
+  outline-offset: 3px;
+}
+.timeline-item.is-active .timeline-index {
+  color: #0a0f16;
+  background: #f8fafc;
+  border-color: #fff;
+  box-shadow: 0 0 20px #ffffff2e;
+}
+
+/* Panel kaca tipis di balik tiap entri (tetap halus seperti referensi) */
+.timeline-panel {
+  background: #ffffff05;
+  border: 1px solid #ffffff0d;
+  border-radius: 16px;
+  min-width: 0;
+  padding: 14px 16px;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    opacity 0.3s ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+/* Item non-aktif diredupkan halus */
+.timeline-item:not(.is-active) .timeline-panel {
+  opacity: 0.55;
+}
+
+.timeline-head {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  display: grid;
+}
+
+.timeline-logo {
+  color: #cfe4ff;
+  border-radius: 8px;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  position: relative;
+}
+.timeline-logo img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 6px #00000073);
+  transition: filter 0.3s ease;
+}
+.timeline-item.is-active .timeline-logo img {
+  filter: drop-shadow(0 2px 10px #7cc4ff3d);
+}
+.timeline-item:not(.is-active) .timeline-logo {
+  color: #8b95a6;
+}
+
+.timeline-head h3 {
+  color: #8b93a3;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+.timeline-item.is-active .timeline-head h3 {
+  color: #f5f8fc;
+}
+
+.timeline-badge {
+  color: #9aa3b2;
+  white-space: nowrap;
+  background: #ffffff08;
+  border: 1px solid #ffffff14;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.timeline-item:not(.is-active) .timeline-badge {
+  color: #7c8594;
+}
+
+.timeline-role {
+  color: #7f8898;
+  letter-spacing: -0.012em;
+  margin: 10px 0 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.4;
+  transition: color 0.3s ease;
+}
+.timeline-item.is-active .timeline-role {
+  color: #d3eaff;
+}
+
+/* Pil detail kecil di bawah jurusan */
+.timeline-tag {
+  color: #8fa4bd;
+  background: #ffffff08;
+  border: 1px solid #ffffff12;
+  border-radius: 999px;
+  align-items: center;
+  max-width: 100%;
+  margin-top: 10px;
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.45;
+  display: inline-flex;
+  transition:
+    color 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+.timeline-item.is-active .timeline-tag {
+  color: #a9c6e6;
+  background: #7cc4ff14;
+  border-color: #7cc4ff3d;
+}
+
+.timeline-detail {
+  color: #737d8d;
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+/* ============ Kartu folder ============ */
+.experience-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.4vw, 32px);
+  margin-top: clamp(64px, 8vw, 108px);
+  display: grid;
+}
+
+.folder-card {
+  min-width: 0;
+  position: relative;
+}
+.folder-card:hover,
+.folder-card:focus-within,
+.folder-card.is-open {
+  z-index: 10;
+}
+
+.folder-shell {
+  --folder-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M24 34L232 34L256 8Q259 3 267 3L372 3Q400 3 400 31L400 216Q400 250 366 250L34 250Q0 250 0 216L0 68Q0 34 24 34Z'/%3E%3C/svg%3E");
+  height: clamp(232px, 20vw, 262px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.folder-card:hover .folder-shell {
+  transform: translateY(-5px);
+}
+
+/* Latar kaca mengikuti siluet folder (mask) */
+.folder-glass {
+  z-index: 0;
+  background:
+    radial-gradient(120% 90% at 82% 0%, #ffffff17, #0000 58%),
+    linear-gradient(160deg, #ffffff12, #ffffff07 45%, #060a10a6);
+  position: absolute;
+  inset: 0;
+  transition: background 0.3s ease;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  -webkit-mask: var(--folder-mask) center / 100% 100% no-repeat;
+  mask: var(--folder-mask) center / 100% 100% no-repeat;
+}
+.folder-card:hover .folder-glass {
+  background:
+    radial-gradient(120% 90% at 82% 0%, #ffffff21, #0000 58%),
+    linear-gradient(160deg, #ffffff17, #ffffff09 45%, #060a10a6);
+}
+
+.folder-outline {
+  z-index: 3;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+.folder-outline path {
+  fill: none;
+  stroke: #ffffff24;
+  stroke-width: 1;
+  transition: stroke 0.3s ease;
+}
+.folder-card:hover .folder-outline path {
+  stroke: #ffffff38;
+}
+
+/* Tumpukan preview konten — TIDAK di-mask agar bisa menyembul keluar folder */
+.folder-previews {
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+}
+
+.folder-preview {
+  --ty: 0px;
+  --tx: 0px;
+  --rot: 0deg;
+  --scale: 1;
+  --lift: 0px;
+  color: #eaf3ff;
+  background-position: center;
+  background-size: cover;
+  border: 1px solid #ffffff1f;
+  border-radius: 10px;
+  flex-direction: column;
+  gap: 5px;
+  padding: 9px 11px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  position: absolute;
+  overflow: hidden;
+  box-shadow: 0 12px 28px #00000057;
+  transform: translate3d(var(--tx), calc(var(--ty) + var(--lift)), 0) rotate(var(--rot))
+    scale(var(--scale));
+  transform-origin: center bottom;
+  transition:
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.folder-preview::after {
+  content: '';
+  background: linear-gradient(180deg, #0000 35%, #0000003d);
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+.folder-preview:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+  z-index: 9;
+}
+.folder-preview:hover {
+  --lift: -10px;
+  --scale: 1.05;
+  border-color: #ffffff42;
+  box-shadow: 0 18px 38px #00000080;
+  z-index: 8;
+}
+
+.folder-preview--1 {
+  opacity: 0.78;
+  top: 56px;
+  left: 16%;
+  right: 16%;
+  height: 84px;
+  --rot: -2.2deg;
+  z-index: 1;
+}
+.folder-preview--2 {
+  opacity: 0.9;
+  top: 92px;
+  left: 13%;
+  right: 15%;
+  height: 88px;
+  --rot: 1.6deg;
+  z-index: 2;
+}
+.folder-preview--3 {
+  top: 130px;
+  left: 10%;
+  right: 10%;
+  height: 96px;
+  --rot: -0.8deg;
+  z-index: 3;
+}
+/* Folder hanya punya satu preview */
+.folder-previews--single .folder-preview--1 {
+  opacity: 0.95;
+  top: 72px;
+  left: 14%;
+  right: 14%;
+  height: 118px;
+  --rot: -1.2deg;
+}
+
+/* Mekar / fan-out saat folder di-hover atau dibuka lewat menu */
+.folder-card.is-open .folder-preview--1,
+.folder-card.is-open .folder-preview--2,
+.folder-card.is-open .folder-preview--3 {
+  box-shadow: 0 22px 46px #0000008f;
+}
+.folder-card.is-open .folder-preview--1 {
+  --ty: -96px;
+  --tx: -14px;
+  --rot: -6deg;
+}
+.folder-card.is-open .folder-preview--2 {
+  --ty: -70px;
+  --tx: 0px;
+  --rot: -1deg;
+}
+.folder-card.is-open .folder-preview--3 {
+  --ty: -44px;
+  --tx: 12px;
+  --rot: 4deg;
+}
+.folder-card.is-open .folder-previews--single .folder-preview--1 {
+  --ty: -78px;
+  --tx: 0px;
+  --rot: -3deg;
+}
+
+@media (hover: hover) {
+  .folder-card:hover .folder-preview--1 {
+    --ty: -96px;
+    --tx: -14px;
+    --rot: -6deg;
+  }
+  .folder-card:hover .folder-preview--2 {
+    --ty: -70px;
+    --tx: 0px;
+    --rot: -1deg;
+  }
+  .folder-card:hover .folder-preview--3 {
+    --ty: -44px;
+    --tx: 12px;
+    --rot: 4deg;
+  }
+  .folder-card:hover .folder-previews--single .folder-preview--1 {
+    --ty: -78px;
+    --tx: 0px;
+    --rot: -3deg;
+  }
+  .folder-card:hover .folder-preview {
+    box-shadow: 0 22px 46px #0000008f;
+  }
+}
+
+.folder-preview-dots {
+  gap: 4px;
+  display: flex;
+}
+.folder-preview-dots i {
+  background: #ffffff59;
+  border-radius: 50%;
+  flex: none;
+  width: 5px;
+  height: 5px;
+  display: block;
+}
+
+.folder-preview-icon {
+  color: #ffffffc7;
+  position: absolute;
+  top: 9px;
+  right: 11px;
+}
+
+.folder-preview-title {
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 0.68rem;
+  font-weight: 650;
+  line-height: 1.3;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.folder-preview-sub {
+  color: #ffffff99;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-top: auto;
+  font-size: 0.56rem;
+  font-weight: 600;
+}
+
+.folder-preview--light {
+  color: #1b2534;
+  background: linear-gradient(150deg, #f5f7fb, #d8e1ed);
+  border-color: #ffffffa6;
+}
+.folder-preview--light::after {
+  background: linear-gradient(180deg, #0000 55%, #94a3b81f);
+}
+.folder-preview-issuer {
+  color: #5a6b82;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.53rem;
+  font-weight: 700;
+}
+.folder-preview--light .folder-preview-title {
+  color: #16202e;
+}
+
+.folder-preview-fade {
+  pointer-events: none;
+  background: linear-gradient(180deg, #0000, #090d14b8 55%, #090d14eb);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+}
+
+.folder-meta {
+  z-index: 4;
+  flex-direction: column;
+  gap: 2px;
+  display: flex;
+  position: absolute;
+  bottom: clamp(16px, 1.8vw, 22px);
+  left: clamp(18px, 2vw, 26px);
+}
+.folder-meta strong {
+  color: #f7fafc;
+  letter-spacing: -0.045em;
+  font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1;
+}
+.folder-meta span {
+  color: #c7ced9;
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 600;
+}
+
+/* Tombol tiga titik + dropdown */
+.folder-menu-wrap {
+  z-index: 6;
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+}
+
+.folder-more {
+  color: #dfe6f0;
+  cursor: pointer;
+  background: #ffffff0f;
+  border: 1px solid #ffffff21;
+  border-radius: 999px;
+  place-items: center;
+  width: 44px;
+  height: 32px;
+  padding: 0;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  display: grid;
+}
+.folder-more:hover,
+.folder-more.is-active {
+  color: #fff;
+  background: #ffffff24;
+  border-color: #ffffff38;
+}
+
+.folder-menu {
+  background: #12161ef5;
+  border: 1px solid #ffffff1f;
+  border-radius: 14px;
+  flex-direction: column;
+  gap: 2px;
+  width: 200px;
+  padding: 6px;
+  display: flex;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  box-shadow: 0 20px 48px #0000008f;
+  animation: folder-menu-in 0.16s ease-out;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.folder-menu__item {
+  color: #e7edf7;
+  cursor: pointer;
+  text-align: left;
+  background: #0000;
+  border: 0;
+  border-radius: 9px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 550;
+  display: flex;
+  transition: background 0.18s ease;
+}
+.folder-menu__item:hover,
+.folder-menu__item:focus-visible {
+  background: #ffffff14;
+  outline: none;
+}
+
+/* ============ Modal pratinjau ============ */
+.folder-modal {
+  z-index: 2000;
+  background: #030509bd;
+  place-items: center;
+  padding: clamp(16px, 4vw, 40px);
+  display: grid;
+  position: fixed;
+  inset: 0;
+  animation: folder-modal-fade 0.2s ease-out;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.folder-modal__panel {
+  background: linear-gradient(160deg, #131a24f5, #0a0f18fa);
+  border: 1px solid #ffffff24;
+  border-radius: 22px;
+  width: min(560px, 100%);
+  max-height: min(86vh, 720px);
+  overflow: auto;
+  position: relative;
+  box-shadow: 0 32px 90px #0000009e;
+  animation: folder-modal-in 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: thin;
+}
+
+.folder-modal__close {
+  color: #fff;
+  cursor: pointer;
+  z-index: 2;
+  background: #0a0e14a6;
+  border: 1px solid #ffffff2e;
+  border-radius: 50%;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  transition: background 0.2s ease;
+  display: grid;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.folder-modal__close:hover {
+  background: #ffffff2b;
+}
+
+.folder-modal__visual {
+  height: 190px;
+  color: #eaf3ff;
+  background-position: center;
+  background-size: cover;
+  border-radius: 22px 22px 0 0;
+  place-items: center;
+  display: grid;
+  position: relative;
+  overflow: hidden;
+}
+.folder-modal__visual::after {
+  content: '';
+  background: linear-gradient(180deg, #0000 35%, #0a0f18e6);
+  position: absolute;
+  inset: 0;
+}
+.folder-modal__visual--light {
+  color: #182230;
+  background: linear-gradient(150deg, #f6f8fc, #d7e0ec);
+}
+.folder-modal__visual--light::after {
+  background: linear-gradient(180deg, #0000 40%, #e2e8f1b8);
+}
+.folder-modal__icon {
+  z-index: 1;
+  position: relative;
+}
+.folder-modal__tag {
+  z-index: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.78;
+  font-size: 0.66rem;
+  font-weight: 700;
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+}
+
+.folder-modal__body {
+  padding: 22px 24px 24px;
+}
+.folder-modal__eyebrow {
+  color: #7fb6ff;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+.folder-modal__body h3 {
+  color: #f5f9ff;
+  letter-spacing: -0.025em;
+  margin: 8px 0 6px;
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+  font-weight: 750;
+  line-height: 1.25;
+}
+.folder-modal__meta {
+  color: #93a0b4;
+  margin: 0 0 14px;
+  font-size: 0.84rem;
+}
+.folder-modal__description {
+  color: #b9c4d4;
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.folder-modal__chips {
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 20px;
+  display: flex;
+}
+.folder-modal__chips span {
+  color: #bcd9ff;
+  background: #3b82f61f;
+  border: 1px solid #3b82f63d;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.folder-modal__cta {
+  color: #eaf4ff;
+  background: #2c67ed38;
+  border: 1px solid #4b83ff6b;
+  border-radius: 12px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+  display: inline-flex;
+}
+.folder-modal__cta:hover {
+  background: #2c67ed61;
+  border-color: #4b83ffa6;
+  transform: translateY(-1px);
+}
+
+@keyframes folder-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes folder-modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes folder-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============ Responsif ============ */
+@media (width <= 980px) {
+  .experience-timeline {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+
+@media (width <= 780px) {
+  .experience-stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    width: min(100%, 480px);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 56px;
+  }
+  .folder-shell {
+    height: 240px;
+  }
+  .folder-preview--1 {
+    top: 50px;
+  }
+  .folder-preview--2 {
+    top: 86px;
+  }
+  .folder-preview--3 {
+    top: 122px;
+  }
+}
+
+@media (width <= 640px) {
+  .experience-section {
+    padding: 48px 18px 28px;
+  }
+  .timeline-title {
+    margin-bottom: 18px;
+  }
+  .timeline-list {
+    gap: 12px;
+  }
+  .timeline-item {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .timeline-index {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+  .timeline-item:not(:last-child) .timeline-rail::after {
+    top: 44px;
+  }
+  .timeline-panel {
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .timeline-head {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 4px;
+  }
+  .timeline-logo,
+  .timeline-logo img {
+    width: 32px;
+    height: 32px;
+  }
+  .timeline-badge {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 2px;
+  }
+  .timeline-role {
+    margin-top: 8px;
+    font-size: 0.92rem;
+  }
+  .experience-contours {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folder-shell,
+  .folder-glass,
+  .folder-preview,
+  .folder-outline path,
+  .timeline-panel,
+  .timeline-index,
+  .timeline-tag,
+  .timeline-role,
+  .timeline-head h3,
+  .timeline-badge,
+  .timeline-rail::after {
+    transition: none;
+  }
+  .timeline-index:hover {
+    transform: none;
+  }
+  .timeline-logo img {
+    transition: none;
+  }
+  .folder-card:hover .folder-shell {
+    transform: none;
+  }
+  .folder-card:hover .folder-preview,
+  .folder-card.is-open .folder-preview {
+    --ty: 0px;
+    --tx: 0px;
+    --lift: 0px;
+    --scale: 1;
+  }
+  .folder-menu,
+  .folder-modal,
+  .folder-modal__panel {
+    animation: none;
+  }
+}

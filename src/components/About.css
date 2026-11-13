@@ -1,0 +1,281 @@
+/* Section About — presisi referensi (efek spider dihapus) */
+
+.about-root-section {
+  isolation: isolate;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  min-height: 100svh;
+  margin-top: 100px;
+  padding: 70px 32px 64px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-container-inner {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.92fr) minmax(0, 0.82fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  width: min(1200px, 100%);
+  min-height: min(690px, 100svh - 120px);
+  margin: 0 auto;
+  display: grid;
+}
+
+.about-intro,
+.about-bio {
+  z-index: 2;
+  position: relative;
+}
+.about-intro {
+  width: 100%;
+}
+
+.about-title {
+  color: #f8fafc;
+  letter-spacing: -0.055em;
+  flex-direction: column;
+  margin: 0 0 26px;
+  /* Nama "HAMDANI FIRMANSYAH" lebih panjang dari nama referensi —
+     dibatasi agar tidak melewati kolom intro ke foto. */
+  font-size: clamp(2.3rem, 5vw, 3.7rem);
+  font-weight: 800;
+  line-height: 0.98;
+  display: flex;
+}
+.about-title > span:last-child {
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(105deg, #fff 8%, #8e98a8 58%, #464c57 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.about-title-greeting {
+  color: #3478ff;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(100deg, #3c83ff 5%, #2056c7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.about-action {
+  color: #eaf2ff;
+  border-radius: 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 19px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  display: inline-flex;
+}
+.about-action:hover {
+  transform: translateY(-2px);
+}
+.about-action-primary {
+  background: linear-gradient(110deg, #347bff, #2456c9);
+  box-shadow: 0 10px 32px #235ccd40;
+}
+.about-action-primary:hover {
+  background: linear-gradient(110deg, #4c8dff, #3068e0);
+}
+.about-action-secondary {
+  color: #64a5ff;
+  background: #030c1d7a;
+  border: 1px solid #3077ff57;
+  margin-top: 13px;
+}
+.about-action-secondary:hover {
+  background: #1b4d9d29;
+  border-color: #3077ffb3;
+}
+
+/* ============ Potret ============ */
+.about-portrait-stage {
+  justify-content: center;
+  align-self: end;
+  align-items: flex-end;
+  height: min(75svh, 690px);
+  min-height: 470px;
+  display: flex;
+  position: relative;
+}
+.about-portrait-glow {
+  filter: blur(38px);
+  background:
+    radial-gradient(at 50% 35%, #ea26405e, #0000 42%),
+    radial-gradient(at 48% 68%, #1e70e26b, #0000 65%);
+  border-radius: 50%;
+  height: 55%;
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  right: 5%;
+}
+.about-portrait {
+  z-index: 1;
+  min-width: 160%;
+  height: 100vh;
+  position: relative;
+  -webkit-mask-image: linear-gradient(#000 0% 76%, #000000bd 88%, #0000 100%);
+  mask-image: linear-gradient(#000 0% 76%, #000000bd 88%, #0000 100%);
+}
+.about-person-image {
+  /* Aset kita PNG cutout transparan (bukan foto berlatar seperti
+     referensi), jadi `contain` agar seluruh badan tampil tanpa crop. */
+  object-fit: contain;
+  object-position: center bottom;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  display: block;
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 16px 35px #0000003d);
+}
+.about-portrait-orbit {
+  z-index: 0;
+  aspect-ratio: 1;
+  pointer-events: none;
+  border: 1px solid #6c97d71f;
+  border-radius: 50%;
+  width: 78%;
+  position: absolute;
+  top: 17%;
+  left: 50%;
+  transform: translate(-50%);
+}
+.about-portrait-orbit-two {
+  border-color: #e53d5121;
+  width: 60%;
+  top: 27%;
+}
+.about-portrait-spark {
+  z-index: 3;
+  background: #39e5d0;
+  border-radius: 50%;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  top: 59%;
+  right: 22%;
+  box-shadow: 0 0 14px 3px #39e5d073;
+}
+
+/* ============ Bio ============ */
+.about-bio {
+  color: #b8bfd3;
+  justify-self: end;
+  max-width: 340px;
+  font-size: clamp(0.98rem, 1.45vw, 1.1rem);
+  font-weight: 450;
+  line-height: 1.75;
+}
+.about-bio p {
+  margin: 0 0 18px;
+}
+.about-bio strong {
+  color: #e5edff;
+  font-weight: 700;
+}
+
+/* ============ Responsive ============ */
+@media (width <= 900px) {
+  .about-root-section {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .about-container-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 0.9fr);
+    gap: 24px;
+    min-height: 0;
+  }
+  .about-intro {
+    grid-area: 1 / 1;
+  }
+  .about-portrait-stage {
+    grid-area: 1 / 2 / span 2;
+    height: min(70svh, 620px);
+    min-height: 430px;
+  }
+  .about-bio {
+    grid-area: 2 / 1;
+    justify-self: start;
+    font-size: 0.95rem;
+  }
+  .about-title {
+    font-size: clamp(2.5rem, 5.8vw, 3.8rem);
+  }
+}
+
+@media (width <= 620px) {
+  .about-root-section > .section-display-title,
+  .about-intro .about-action-primary {
+    display: none;
+  }
+  .about-root-section {
+    min-height: auto;
+    margin-top: 0;
+    padding: 48px 22px 60px;
+  }
+  .about-container-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .about-intro {
+    text-align: center;
+    grid-area: 1 / 1;
+  }
+  .about-title {
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 18px;
+    font-size: clamp(2.4rem, 10.5vw, 3.5rem);
+    line-height: 1.06;
+  }
+  .about-portrait-stage {
+    grid-area: 2 / 1;
+    justify-self: center;
+    width: min(100%, 700px);
+    height: clamp(400px, 60svh, 540px);
+    min-height: 0;
+  }
+  .about-portrait-glow {
+    filter: none;
+  }
+  .about-portrait {
+    width: min(100%, 700px);
+    min-width: 0;
+    height: 100%;
+  }
+  .about-person-image {
+    object-fit: contain;
+    transform-origin: bottom;
+    height: 100%;
+    /* Cutout transparan — skala dijaga agar posisi & proporsi mirip
+       referensi (foto setinggi ~400px, tidak memenuhi layar). */
+    transform: scale(1.15);
+  }
+  .about-bio {
+    text-align: center;
+    grid-area: 3 / 1;
+    justify-self: center;
+    width: min(100%, 420px);
+    max-width: none;
+    margin-top: -16px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .about-action-secondary {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-action {
+    transition: none;
+  }
+}

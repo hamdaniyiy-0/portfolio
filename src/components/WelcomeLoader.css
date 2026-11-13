@@ -1,0 +1,115 @@
+.welcome-screen-root {
+  z-index: 99999;
+  isolation: isolate;
+  opacity: 1;
+  background: #02050b;
+  place-items: center;
+  transition:
+    transform 0.7s cubic-bezier(0.83, 0, 0.17, 1),
+    visibility 0.7s;
+  display: grid;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+.welcome-screen-root.is-leaving {
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-100%);
+}
+
+.welcome-loader {
+  z-index: 2;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: min(320px, 70vw);
+  animation: 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both welcome-loader-in;
+  display: flex;
+  position: relative;
+}
+
+.welcome-loader-number {
+  color: #f4f6fb;
+  letter-spacing: -0.075em;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(4rem, 14vw, 9rem);
+  font-weight: 800;
+  line-height: 0.9;
+}
+.welcome-loader-number span {
+  color: #0062ff;
+  letter-spacing: -0.04em;
+  margin-left: 0.08em;
+  font-size: 0.42em;
+  font-weight: 500;
+}
+
+.welcome-progress-track {
+  background: #ffffff2e;
+  width: 100%;
+  height: 2px;
+  overflow: hidden;
+}
+.welcome-progress-track span {
+  transform-origin: 0;
+  background: #0062ff;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.1s linear;
+  display: block;
+  transform: scaleX(0);
+}
+
+.welcome-loader-count {
+  color: #fdfdff;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
+}
+
+.welcome-loader-error {
+  color: red;
+  text-align: center;
+  gap: 12px;
+  font-size: 0.82rem;
+  display: grid;
+}
+.welcome-loader-error > div {
+  justify-content: center;
+  gap: 16px;
+  display: flex;
+}
+.welcome-loader-error button {
+  color: #dbeafe;
+  font: inherit;
+  cursor: pointer;
+  text-underline-offset: 3px;
+  background: 0 0;
+  border: 0;
+  padding: 6px 2px;
+  text-decoration: underline;
+}
+.welcome-loader-error button:hover {
+  color: #8db9ff;
+}
+
+@keyframes welcome-loader-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen-root,
+  .welcome-progress-track span {
+    transition-duration: 0.15s;
+  }
+  .welcome-loader {
+    animation: none;
+  }
+}
