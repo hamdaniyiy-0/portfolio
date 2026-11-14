@@ -1,7 +1,7 @@
 /**
- * Komentar tersimpan LOCALLY di browser (localStorage) — tanpa backend.
- * Keterbatasan: komentar hanya terlihat di perangkat/browser masing-masing.
- * Form kontak memakai mailto (lihat Contact.jsx).
+ * Komentar tersimpan LOCALLY di browser (localStorage) agar langsung tampil.
+ * Salinan setiap komentar juga dikirim ke Netlify Forms (form "comment")
+ * lewat fetch ke /__forms.html — lihat Contact.jsx.
  */
 
 const KEY = 'portfolio-comments'

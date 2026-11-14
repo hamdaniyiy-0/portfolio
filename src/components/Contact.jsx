@@ -34,8 +34,17 @@ function timeAgo(ts) {
   return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
+/** Ubah data URL (hasil FileReader) menjadi File agar bisa dikirim lewat FormData. */
+async function dataUrlToFile(dataUrl, fileName) {
+  const blob = await (await fetch(dataUrl)).blob()
+  return new File([blob], fileName || 'foto-profil', { type: blob.type || 'image/jpeg' })
+}
+
+/** Endpoint "palsu" berisi skeleton form statis — wajib untuk Netlify Forms di SPA. */
+const NETLIFY_FORMS_ENDPOINT = '/__forms.html'
+
 export default function Contact() {
-  /* ============ Form pesan (API + Nodemailer) ============ */
+  /* ============ Form pesan (Netlify Forms) ============ */
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
   const [sendingMessage, setSendingMessage] = useState(false)
@@ -69,16 +78,27 @@ export default function Contact() {
     const timeoutId = setTimeout(() => controller.abort(), 20000)
 
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL || '/api/contact', {
+      // Netlify Forms membaca data dari endpoint statis ini (public/__forms.html).
+      const body = new URLSearchParams({
+        'form-name': 'contact',
+        name,
+        email,
+        message,
+      })
+
+      const response = await fetch(NETLIFY_FORMS_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message }),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString(),
         signal: controller.signal,
       })
 
-      const data = await response.json().catch(() => ({}))
       if (!response.ok) {
-        throw new Error(data.error || 'Pesan gagal dikirim.')
+        throw new Error(
+          response.status === 404
+            ? 'Form belum terdeteksi Netlify (HTTP 404). Aktifkan Forms → Form detection, lalu deploy ulang.'
+            : `Server menolak pengiriman (HTTP ${response.status}).`,
+        )
       }
 
       setForm({ name: '', email: '', message: '' })
@@ -137,32 +157,58 @@ export default function Contact() {
     reader.readAsDataURL(file)
   }
 
-  const submitComment = (event) => {
+  const submitComment = async (event) => {
     event.preventDefault()
-    if (getCooldownRemaining() > 0) return
+    if (sending || getCooldownRemaining() > 0) return
     setSending(true)
     setCErrror('')
 
-    // Penulisan ke localStorage bersifat sinkron — tunda sebentar agar
-    // status "Mengirim..." terlihat seperti referensi.
-    setTimeout(() => {
+    try {
+      // Foto Profil bersifat opsional → hanya dilampirkan jika ada.
+      const data = new FormData()
+      data.append('form-name', 'comment')
+      data.append('name', cForm.name)
+      data.append('message', cForm.message)
+      if (cForm.photo) {
+        data.append('photo', await dataUrlToFile(cForm.photo, cForm.photoName))
+      }
+
+      const response = await fetch(NETLIFY_FORMS_ENDPOINT, {
+        method: 'POST',
+        body: data, // Content-Type multipart/form-data di-set otomatis oleh browser
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          response.status === 404
+            ? 'Form komentar belum terdeteksi Netlify (HTTP 404). Deploy ulang setelah Form detection aktif.'
+            : `Server menolak pengiriman (HTTP ${response.status}).`,
+        )
+      }
+
+      // Tetap simpan komentar di localStorage agar langsung tampil di halaman ini.
       const result = addComment({
         name: cForm.name,
         message: cForm.message,
         photo: cForm.photo,
       })
-      setSending(false)
+
       if (!result.ok) {
         setCErrror(result.error)
         return
       }
+
       setComments(result.comments)
       setCount(commentCount())
       startCooldown()
       setRemaining(getCooldownRemaining())
       setCForm({ name: '', message: '', photo: null, photoName: '' })
       setVisible(PAGE_SIZE)
-    }, 350)
+    } catch (error) {
+      setCErrror(error.message || 'Komentar gagal dikirim. Periksa koneksi lalu coba lagi.')
+    } finally {
+      setSending(false)
+    }
   }
 
   const shown = comments.slice(0, visible)
@@ -182,7 +228,21 @@ export default function Contact() {
               Ada yang mau didiskusikan? Langsung kirim pesan aja ya...
             </p>
 
-            <form className="contact-actual-form" onSubmit={submitMessage}>
+            <form
+              className="contact-actual-form"
+              name="contact"
+              method="post"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={submitMessage}
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <p hidden>
+                <label>
+                  Jangan diisi: <input name="bot-field" />
+                </label>
+              </p>
+
               <div className="contact-form-field">
                 <label htmlFor="user-name">Nama</label>
                 <div className="contact-input-wrap">
@@ -292,11 +352,27 @@ export default function Contact() {
               </h2>
             </div>
 
-            <form className="contact-comment-form" onSubmit={submitComment}>
+            <form
+              className="contact-comment-form"
+              name="comment"
+              method="post"
+              encType="multipart/form-data"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={submitComment}
+            >
+              <input type="hidden" name="form-name" value="comment" />
+              <p hidden>
+                <label>
+                  Jangan diisi: <input name="bot-field" />
+                </label>
+              </p>
+
               <div className="contact-form-field">
                 <label htmlFor="comment-name">Nama</label>
                 <input
                   id="comment-name"
+                  name="name"
                   type="text"
                   required
                   maxLength={50}
@@ -310,6 +386,7 @@ export default function Contact() {
                 <label htmlFor="comment-message">Komentar</label>
                 <textarea
                   id="comment-message"
+                  name="message"
                   required
                   maxLength={500}
                   rows={4}
@@ -328,6 +405,7 @@ export default function Contact() {
                 <input
                   className="contact-photo-input"
                   id="comment-photo"
+                  name="photo"
                   type="file"
                   accept="image/*"
                   onChange={pickPhoto}

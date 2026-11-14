@@ -1,0 +1,6 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Folder public/ (termasuk public/__forms.html) otomatis disalin ke dist/ oleh Vite,
+# sehingga Netlify bisa mendeteksi form "contact" dan "comment" saat build.
