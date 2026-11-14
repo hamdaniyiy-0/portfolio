@@ -1,0 +1,1 @@
+.lanyard{pointer-events:none;width:100%;height:100%;position:relative;overflow:hidden}.lanyard-canvas{pointer-events:none;width:100%;height:100%;display:block}.lanyard-stage{width:100%;height:100%;position:relative}.lanyard-fallback{pointer-events:auto}@media (width>=1024px){.lanyard-stage--boxed{width:28rem;max-width:100%;margin-left:auto;margin-right:8%}}
