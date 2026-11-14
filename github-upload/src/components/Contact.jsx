@@ -37,11 +37,11 @@ async function dataUrlToFile(dataUrl, fileName) {
   return new File([blob], fileName || 'foto-profil', { type: blob.type || 'image/jpeg' })
 }
 
-/** Endpoint "palsu" berisi skeleton form statis — wajib untuk Netlify Forms di SPA. */
-const NETLIFY_FORMS_ENDPOINT = '/__forms.html'
+/** Endpoint Formspree untuk form pesan & komentar. */
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xyewkoze'
 
 export default function Contact() {
-  /* ============ Form pesan (Netlify Forms) ============ */
+  /* ============ Form pesan (Formspree) ============ */
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
   const [sendingMessage, setSendingMessage] = useState(false)
@@ -75,27 +75,27 @@ export default function Contact() {
     const timeoutId = setTimeout(() => controller.abort(), 20000)
 
     try {
-      // Netlify Forms membaca data dari endpoint statis ini (public/__forms.html).
+      // Formspree menerima data form-urlencoded dan membalas JSON karena
+      // header Accept: application/json.
       const body = new URLSearchParams({
-        'form-name': 'contact',
         name,
         email,
         message,
+        _subject: 'Pesan Baru dari Website',
       })
 
-      const response = await fetch(NETLIFY_FORMS_ENDPOINT, {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+        },
         body: body.toString(),
         signal: controller.signal,
       })
 
       if (!response.ok) {
-        throw new Error(
-          response.status === 404
-            ? 'Form belum terdeteksi Netlify (HTTP 404). Aktifkan Forms → Form detection, lalu deploy ulang.'
-            : `Server menolak pengiriman (HTTP ${response.status}).`,
-        )
+        throw new Error(`Formspree menolak pengiriman (HTTP ${response.status}).`)
       }
 
       setForm({ name: '', email: '', message: '' })
@@ -113,7 +113,7 @@ export default function Contact() {
     }
   }
 
-  /* ============ Komentar (Netlify Forms via Function + fallback localStorage) ============ */
+  /* ============ Komentar (Formspree + penyimpanan lokal) ============ */
   const [comments, setComments] = useState(() => loadComments())
   const [count, setCount] = useState(() => commentCount())
   const [cForm, setCForm] = useState({ name: '', message: '', photo: null, photoName: '' })
@@ -122,16 +122,16 @@ export default function Contact() {
   const [visible, setVisible] = useState(PAGE_SIZE)
 
   // Komentar yang baru dikirim dari perangkat ini tapi belum muncul di API
-  // (jeda propagasi Netlify Forms). Disimpan sebentar agar tidak "hilang"
+  // (jika endpoint komentar tersedia). Disimpan sebentar agar tidak "hilang"
   // saat daftar server menggantikan daftar lokal.
   const pendingRef = useRef([])
   const syncTimers = useRef([])
 
   /**
-   * Ambil komentar dari Netlify Function.
+   * Ambil komentar dari endpoint komentar (jika tersedia).
    * Saat berhasil, daftar SERVER menjadi sumber kebenaran + komentar yang
    * baru saja dikirim dari perangkat ini (maks. 2 menit).
-   * Saat function gagal (null), daftar lokal dibiarkan sebagai fallback.
+   * Saat endpoint gagal (null), daftar lokal dibiarkan sebagai fallback.
    */
   const refreshComments = async () => {
     const remote = await fetchComments()
@@ -210,24 +210,20 @@ export default function Contact() {
     try {
       // Foto Profil bersifat opsional → hanya dilampirkan jika ada.
       const data = new FormData()
-      data.append('form-name', 'comment')
       data.append('name', cForm.name)
       data.append('message', cForm.message)
       if (cForm.photo) {
         data.append('photo', await dataUrlToFile(cForm.photo, cForm.photoName))
       }
 
-      const response = await fetch(NETLIFY_FORMS_ENDPOINT, {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
+        headers: { Accept: 'application/json' },
         body: data, // Content-Type multipart/form-data di-set otomatis oleh browser
       })
 
       if (!response.ok) {
-        throw new Error(
-          response.status === 404
-            ? 'Form komentar belum terdeteksi Netlify (HTTP 404). Deploy ulang setelah Form detection aktif.'
-            : `Server menolak pengiriman (HTTP ${response.status}).`,
-        )
+        throw new Error(`Formspree menolak pengiriman komentar (HTTP ${response.status}).`)
       }
 
       // Tetap simpan komentar di localStorage agar langsung tampil di halaman ini.
@@ -251,8 +247,9 @@ export default function Contact() {
         createdAt: submittedAt,
         expiresAt: submittedAt + 2 * 60 * 1000,
       }
-      // Tandai sebagai "menunggu API" agar tetap tampil sampai Netlify Forms
-      // selesai memprosesnya, tanpa membuat perangkat lain ikut menampilkannya.
+      // Tandai sebagai "menunggu API" agar tetap tampil sampai endpoint
+      // komentar selesai memprosesnya, tanpa membuat perangkat lain ikut
+      // menampilkannya.
       pendingRef.current = [
         pendingComment,
         ...pendingRef.current.filter(
@@ -265,9 +262,9 @@ export default function Contact() {
       setCForm({ name: '', message: '', photo: null, photoName: '' })
       setVisible(PAGE_SIZE)
 
-      // Ambil ulang dari Netlify Forms agar komentar baru (dan komentar orang
-      // lain) langsung tampil tanpa reload halaman. Ulangi beberapa detik
-      // kemudian untuk mengantisipasi jeda propagasi API Netlify.
+      // Ambil ulang dari endpoint komentar (jika tersedia) agar komentar baru
+      // langsung tampil tanpa reload. Ulangi beberapa detik kemudian untuk
+      // mengantisipasi jeda propagasi API.
       refreshComments()
       syncTimers.current.push(
         setTimeout(refreshComments, 3000),
@@ -301,17 +298,8 @@ export default function Contact() {
               className="contact-actual-form"
               name="contact"
               method="post"
-              data-netlify="true"
-              netlify-honeypot="bot-field"
               onSubmit={submitMessage}
             >
-              <input type="hidden" name="form-name" value="contact" />
-              <p hidden>
-                <label>
-                  Jangan diisi: <input name="bot-field" />
-                </label>
-              </p>
-
               <div className="contact-form-field">
                 <label htmlFor="user-name">Nama</label>
                 <div className="contact-input-wrap">
@@ -426,17 +414,8 @@ export default function Contact() {
               name="comment"
               method="post"
               encType="multipart/form-data"
-              data-netlify="true"
-              netlify-honeypot="bot-field"
               onSubmit={submitComment}
             >
-              <input type="hidden" name="form-name" value="comment" />
-              <p hidden>
-                <label>
-                  Jangan diisi: <input name="bot-field" />
-                </label>
-              </p>
-
               <div className="contact-form-field">
                 <label htmlFor="comment-name">Nama</label>
                 <input
