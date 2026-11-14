@@ -1,16 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, Check, ImagePlus, MessageSquare, Send, User, Mail, FileText } from 'lucide-react'
+import { ArrowUpRight, Check, MessageSquare, Send, User, Mail, FileText } from 'lucide-react'
 import { socials } from '../data/portfolio'
-import {
-  addComment,
-  commentCount,
-  fetchComments,
-  getMaxPhotoBytes,
-  loadComments,
-} from '../lib/comments'
+import GiscusComments from './GiscusComments'
 import './Contact.css'
-
-const PAGE_SIZE = 5
 
 const SUBS = {
   GitHub: '@hamdaniyiy-0',
@@ -18,26 +10,7 @@ const SUBS = {
   TikTok: '@hamyeyooo',
 }
 
-/** Format waktu komentar relatif (id-ID). */
-function timeAgo(ts) {
-  const diff = Date.now() - ts
-  const menit = Math.floor(diff / 60000)
-  if (menit < 1) return 'baru saja'
-  if (menit < 60) return `${menit} menit lalu`
-  const jam = Math.floor(menit / 60)
-  if (jam < 24) return `${jam} jam lalu`
-  const hari = Math.floor(jam / 24)
-  if (hari < 7) return `${hari} hari lalu`
-  return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-}
-
-/** Ubah data URL (hasil FileReader) menjadi File agar bisa dikirim lewat FormData. */
-async function dataUrlToFile(dataUrl, fileName) {
-  const blob = await (await fetch(dataUrl)).blob()
-  return new File([blob], fileName || 'foto-profil', { type: blob.type || 'image/jpeg' })
-}
-
-/** Endpoint Formspree untuk form pesan & komentar. */
+/** Endpoint Formspree untuk form pesan. */
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xyewkoze'
 
 export default function Contact() {
@@ -112,172 +85,6 @@ export default function Contact() {
       setSendingMessage(false)
     }
   }
-
-  /* ============ Komentar (Formspree + penyimpanan lokal) ============ */
-  const [comments, setComments] = useState(() => loadComments())
-  const [count, setCount] = useState(() => commentCount())
-  const [cForm, setCForm] = useState({ name: '', message: '', photo: null, photoName: '' })
-  const [cError, setCErrror] = useState('')
-  const [sending, setSending] = useState(false)
-  const [visible, setVisible] = useState(PAGE_SIZE)
-
-  // Komentar yang baru dikirim dari perangkat ini tapi belum muncul di API
-  // (jika endpoint komentar tersedia). Disimpan sebentar agar tidak "hilang"
-  // saat daftar server menggantikan daftar lokal.
-  const pendingRef = useRef([])
-  const syncTimers = useRef([])
-
-  /**
-   * Ambil komentar dari endpoint komentar (jika tersedia).
-   * Saat berhasil, daftar SERVER menjadi sumber kebenaran + komentar yang
-   * baru saja dikirim dari perangkat ini (maks. 2 menit).
-   * Saat endpoint gagal (null), daftar lokal dibiarkan sebagai fallback.
-   */
-  const refreshComments = async () => {
-    const remote = await fetchComments()
-    if (!remote) return
-
-    const now = Date.now()
-    const isSame = (a, b) => a.name === b.name && a.message === b.message
-
-    pendingRef.current = pendingRef.current.filter(
-      (pending) => pending.expiresAt > now && !remote.some((item) => isSame(item, pending)),
-    )
-
-    const merged = [...pendingRef.current, ...remote].sort((a, b) => b.createdAt - a.createdAt)
-    setComments(merged)
-  }
-
-  // Muat komentar saat halaman dibuka.
-  useEffect(() => {
-    refreshComments()
-  }, [])
-
-  // Auto-refresh tiap 15 detik + saat tab kembali aktif/fokus, supaya
-  // komentar dari HP/pengunjung lain muncul di laptop tanpa reload.
-  useEffect(() => {
-    const POLL_MS = 15000
-    const tick = () => {
-      if (!document.hidden) refreshComments()
-    }
-    const id = setInterval(tick, POLL_MS)
-    document.addEventListener('visibilitychange', tick)
-    window.addEventListener('focus', tick)
-
-    return () => {
-      clearInterval(id)
-      document.removeEventListener('visibilitychange', tick)
-      window.removeEventListener('focus', tick)
-    }
-  }, [])
-
-  // Bersihkan timer refresh tertunda saat komponen di-unmount.
-  useEffect(
-    () => () => {
-      syncTimers.current.forEach((timer) => clearTimeout(timer))
-      syncTimers.current = []
-    },
-    [],
-  )
-
-  // Jaga angka di judul "Komentar (n)" tetap sinkron dengan daftar.
-  useEffect(() => {
-    setCount(comments.length)
-  }, [comments])
-
-  const pickPhoto = (event) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-    if (file.size > getMaxPhotoBytes()) {
-      setCErrror('Ukuran file maksimal 5 MB.')
-      event.target.value = ''
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = () => {
-      setCForm((f) => ({ ...f, photo: reader.result, photoName: file.name }))
-      setCErrror('')
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const submitComment = async (event) => {
-    event.preventDefault()
-    if (sending) return
-    setSending(true)
-    setCErrror('')
-
-    try {
-      // Foto Profil bersifat opsional → hanya dilampirkan jika ada.
-      const data = new FormData()
-      data.append('name', cForm.name)
-      data.append('message', cForm.message)
-      if (cForm.photo) {
-        data.append('photo', await dataUrlToFile(cForm.photo, cForm.photoName))
-      }
-
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: data, // Content-Type multipart/form-data di-set otomatis oleh browser
-      })
-
-      if (!response.ok) {
-        throw new Error(`Formspree menolak pengiriman komentar (HTTP ${response.status}).`)
-      }
-
-      // Tetap simpan komentar di localStorage agar langsung tampil di halaman ini.
-      const result = addComment({
-        name: cForm.name,
-        message: cForm.message,
-        photo: cForm.photo,
-      })
-
-      if (!result.ok) {
-        setCErrror(result.error)
-        return
-      }
-
-      const submittedAt = Date.now()
-      const pendingComment = {
-        id: `pending-${submittedAt}`,
-        name: cForm.name.trim().slice(0, 50),
-        message: cForm.message.trim().slice(0, 500),
-        photo: cForm.photo,
-        createdAt: submittedAt,
-        expiresAt: submittedAt + 2 * 60 * 1000,
-      }
-      // Tandai sebagai "menunggu API" agar tetap tampil sampai endpoint
-      // komentar selesai memprosesnya, tanpa membuat perangkat lain ikut
-      // menampilkannya.
-      pendingRef.current = [
-        pendingComment,
-        ...pendingRef.current.filter(
-          (item) => !(item.name === pendingComment.name && item.message === pendingComment.message),
-        ),
-      ]
-
-      setComments(result.comments)
-      setCount(commentCount())
-      setCForm({ name: '', message: '', photo: null, photoName: '' })
-      setVisible(PAGE_SIZE)
-
-      // Ambil ulang dari endpoint komentar (jika tersedia) agar komentar baru
-      // langsung tampil tanpa reload. Ulangi beberapa detik kemudian untuk
-      // mengantisipasi jeda propagasi API.
-      refreshComments()
-      syncTimers.current.push(
-        setTimeout(refreshComments, 3000),
-        setTimeout(refreshComments, 10000),
-      )
-    } catch (error) {
-      setCErrror(error.message || 'Komentar gagal dikirim. Periksa koneksi lalu coba lagi.')
-    } finally {
-      setSending(false)
-    }
-  }
-
-  const shown = comments.slice(0, visible)
 
   return (
     <section className="contact-root-section" id="Contact" aria-labelledby="contact-section-heading">
@@ -398,112 +205,16 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ============ Panel kanan: komentar ============ */}
+          {/* ============ Panel kanan: komentar (Giscus) ============ */}
           <div className="contact-comments-panel reveal" style={{ '--reveal-delay': '0.1s' }}>
             <div className="contact-comments-header">
               <span className="contact-comments-icon" aria-hidden="true">
                 <MessageSquare size={19} />
               </span>
-              <h2>
-                Komentar <span>({count.toLocaleString('id-ID')})</span>
-              </h2>
+              <h2>Komentar</h2>
             </div>
 
-            <form
-              className="contact-comment-form"
-              name="comment"
-              method="post"
-              encType="multipart/form-data"
-              onSubmit={submitComment}
-            >
-              <div className="contact-form-field">
-                <label htmlFor="comment-name">Nama</label>
-                <input
-                  id="comment-name"
-                  name="name"
-                  type="text"
-                  required
-                  maxLength={50}
-                  placeholder="Masukkan nama kamu"
-                  value={cForm.name}
-                  onChange={(e) => setCForm({ ...cForm, name: e.target.value })}
-                />
-              </div>
-
-              <div className="contact-form-field">
-                <label htmlFor="comment-message">Komentar</label>
-                <textarea
-                  id="comment-message"
-                  name="message"
-                  required
-                  maxLength={500}
-                  rows={4}
-                  placeholder="Tulis komentar kamu di sini..."
-                  value={cForm.message}
-                  onChange={(e) => setCForm({ ...cForm, message: e.target.value })}
-                />
-              </div>
-
-              <div className="contact-form-field">
-                <label htmlFor="comment-photo">Foto Profil (opsional)</label>
-                <label className="contact-photo-picker" htmlFor="comment-photo">
-                  <ImagePlus size={17} aria-hidden="true" />
-                  <span>{cForm.photoName || 'Pilih Foto Profil'}</span>
-                </label>
-                <input
-                  className="contact-photo-input"
-                  id="comment-photo"
-                  name="photo"
-                  type="file"
-                  accept="image/*"
-                  onChange={pickPhoto}
-                />
-                <span className="contact-photo-hint">Ukuran file maksimal 5 MB</span>
-              </div>
-
-              {cError && (
-                <p className="contact-comment-error" role="alert">
-                  {cError}
-                </p>
-              )}
-
-              <button type="submit" className="contact-submit-btn" disabled={sending}>
-                <Send size={15} aria-hidden="true" />
-                <span>{sending ? 'Mengirim...' : 'Kirim Komentar'}</span>
-              </button>
-            </form>
-
-            <div className="contact-comments-list">
-              {shown.length === 0 ? (
-                <p className="contact-comments-empty">Belum ada komentar. Jadilah yang pertama!</p>
-              ) : (
-                shown.map((c) => (
-                  <article className="contact-comment-item" key={c.id}>
-                    {c.photo ? (
-                      <img className="contact-comment-avatar" src={c.photo} alt="" loading="lazy" />
-                    ) : (
-                      <span className="contact-comment-avatar contact-comment-avatar-fallback" aria-hidden="true">
-                        {c.name.slice(0, 1).toUpperCase()}
-                      </span>
-                    )}
-                    <div className="contact-comment-content">
-                      <div className="contact-comment-meta">
-                        <strong>{c.name}</strong>
-                        <time dateTime={new Date(c.createdAt).toISOString()}>{timeAgo(c.createdAt)}</time>
-                      </div>
-                      <p>{c.message}</p>
-                    </div>
-                  </article>
-                ))
-              )}
-            </div>
-
-            {comments.length > visible && (
-              <button type="button" className="contact-comments-more" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
-                <span>Lihat komentar lainnya</span>
-                <ArrowUpRight size={16} aria-hidden="true" />
-              </button>
-            )}
+            <GiscusComments />
           </div>
         </div>
       </div>
