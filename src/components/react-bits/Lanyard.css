@@ -1,0 +1,40 @@
+.lanyard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Kanvas menutupi seluruh hero — pointer harus tembus agar tombol/tautan
+     di bawahnya tetap bisa diklik. Interaksi kartu ditangani lewat window. */
+  pointer-events: none;
+}
+
+.lanyard-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Wadah penuh di dalam .lanyard-card-container (desktop absolute /
+   mobile relative) — tinggi mengikuti wadahnya. */
+.lanyard-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fallback statis (tanpa WebGL) perlu menerima pointer untuk efek tilt. */
+.lanyard-fallback {
+  pointer-events: auto;
+}
+
+/* Saat kanvas lanyard melebar ke seluruh hero (desktop), fallback statis
+   dikembalikan ke kotak di kolom kanan agar tidak menutupi teks. */
+@media (min-width: 1024px) {
+  .lanyard-stage--boxed {
+    width: 28rem;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: 8%;
+  }
+}

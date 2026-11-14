@@ -1,0 +1,122 @@
+/* Section Spotify — presisi referensi (panel kanan: CodeWidget) */
+
+.spotify-section {
+  padding: 64px 24px 140px;
+  position: relative;
+}
+
+.spotify-card {
+  background:
+    radial-gradient(at 90% 100%, #2c67ed29, #0000 42%),
+    linear-gradient(135deg, #0c1326f5, #050813f5);
+  border: 1px solid #5e90ff33;
+  border-radius: 28px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(24px, 3vw, 40px);
+  width: min(100%, 1200px);
+  margin: 0 auto;
+  padding: clamp(24px, 3vw, 40px);
+  display: grid;
+  position: relative;
+  overflow: visible;
+  box-shadow:
+    0 24px 80px #00000047,
+    inset 0 1px #ffffff0a;
+}
+.spotify-card::before {
+  content: '';
+  pointer-events: none;
+  border: 1px solid #4d84ff1a;
+  border-radius: 50%;
+  width: 280px;
+  height: 280px;
+  position: absolute;
+  top: -110px;
+  left: -90px;
+}
+
+.spotify-copy {
+  min-width: 0;
+}
+.spotify-copy h2 {
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.055em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  background: linear-gradient(105deg, #fff 8%, #8e98a8 58%, #464c57 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  max-width: 100%;
+  margin: 0 0 20px;
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+.spotify-copy h2 span {
+  color: #3478ff;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(100deg, #3c83ff 5% 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.spotify-description {
+  color: #94a3b8;
+  max-width: 390px;
+  margin: 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  line-height: 1.75;
+}
+
+.spotify-open-link {
+  color: #c7dcff;
+  background: #2353b11f;
+  border: 1px solid #4b83ff4d;
+  border-radius: 12px;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  margin-top: 28px;
+  padding: 0 16px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  display: inline-flex;
+}
+.spotify-open-link:hover {
+  background: #2353b13d;
+  border-color: #4b83ffa6;
+  transform: translateY(-2px);
+}
+
+@media (width <= 760px) {
+  .spotify-section {
+    padding: 48px 20px 64px;
+  }
+  .spotify-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 520px;
+    padding: clamp(22px, 5vw, 32px);
+    overflow: visible;
+  }
+  .spotify-copy {
+    width: 100%;
+    min-width: 0;
+  }
+  .spotify-copy h2 {
+    max-width: 100%;
+    font-size: clamp(2rem, 8vw, 2.8rem);
+  }
+}
+
+@media (width <= 480px) {
+  .spotify-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .spotify-card {
+    border-radius: 22px;
+  }
+}

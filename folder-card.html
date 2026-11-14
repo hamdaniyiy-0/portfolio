@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="id" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Folder Card — Contrast Glassmorphism</title>
+    <link rel="icon" href="data:," />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* ==========================================================
+         Hanya efek yang tidak praktis di utility Tailwind:
+         clip-path siluet folder + gradien kaca + animasi kertas.
+         ========================================================== */
+
+      /* Siluet: tab melengkung kiri-atas menyatu mulus ke badan folder.
+         Dipakai oleh 2 lapisan: rim terang + kaca gelap di dalamnya. */
+      .folder-clip {
+        clip-path: url(#folder-tab-clip);
+      }
+
+      /* Kaca shell (bagian belakang + tab): transparan, blur 12px,
+         gradient vertikal halus supaya ada dimensi. */
+      .glass-shell {
+        background:
+          radial-gradient(130% 90% at 18% -12%, rgba(255, 255, 255, 0.14), transparent 55%),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.06) 0%,
+            rgba(255, 255, 255, 0.02) 42%,
+            rgba(8, 9, 13, 0.5) 100%
+          ),
+          rgba(13, 14, 19, 0.78);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.16),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.55);
+      }
+
+      /* 1) Shadow luar tebal — dipasang di wrapper, bukan di elemen
+         ber-clip-path, karena box-shadow ikut terpotong oleh clip. */
+      .folder-shell {
+        filter:
+          drop-shadow(0 26px 40px rgba(0, 0, 0, 0.85))
+          drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 12px rgba(0, 0, 0, 0.5));
+      }
+
+      /* 3) Highlight/pantulan cahaya di area tab (kiri atas) */
+      .tab-sheen {
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.32) 0%,
+            rgba(255, 255, 255, 0.08) 7%,
+            rgba(255, 255, 255, 0) 16%
+          ),
+          radial-gradient(58% 24% at 23% 0%, rgba(255, 255, 255, 0.3), transparent 72%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      }
+
+      /* Kaca depan: sengaja lebih gelap agar angka/label/tombol
+         kontras di atas kertas yang ramai. */
+      .glass-front {
+        background: linear-gradient(
+          180deg,
+          rgba(23, 24, 32, 0.7) 0%,
+          rgba(13, 14, 20, 0.87) 45%,
+          rgba(9, 10, 14, 0.94) 100%
+        );
+        backdrop-filter: blur(14px) saturate(120%);
+        -webkit-backdrop-filter: blur(14px) saturate(120%);
+      }
+
+      .text-glow {
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      /* Tumpukan kertas: meluncur naik saat folder di-hover */
+      .paper {
+        transition:
+          transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.5s ease;
+        will-change: transform;
+      }
+      .paper-1 {
+        transform: translateY(-4px) rotate(-1.5deg);
+      }
+      .paper-2 {
+        transform: translateY(-6px) rotate(2.5deg);
+      }
+      .paper-3 {
+        transform: translateY(-8px) rotate(-3deg);
+      }
+      .folder-card:hover .paper-1 {
+        transform: translateY(-16px) rotate(-4deg);
+      }
+      .folder-card:hover .paper-2 {
+        transform: translateY(-14px) rotate(2.5deg);
+      }
+      .folder-card:hover .paper-3 {
+        transform: translateY(-12px) rotate(-2deg);
+      }
+      .folder-body {
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .folder-card:hover .folder-body {
+        transform: translateY(-5px);
+      }
+
+      /* Latar grid halus (opsional, hanya pemanis panggung demo) */
+      .grid-bg {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: radial-gradient(ellipse at center, black 15%, transparent 72%);
+        -webkit-mask-image: radial-gradient(ellipse at center, black 15%, transparent 72%);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .paper,
+        .folder-body {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen bg-[#08090c] text-white antialiased">
+    <main class="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-16">
+      <!-- ===== Ambience di belakang kaca (supaya blur terlihat) ===== -->
+      <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div class="absolute left-[18%] top-[20%] h-72 w-72 rounded-full bg-violet-600/20 blur-[90px]"></div>
+        <div class="absolute right-[16%] top-[26%] h-64 w-64 rounded-full bg-sky-500/15 blur-[90px]"></div>
+        <div class="absolute bottom-[16%] left-1/2 h-56 w-80 -translate-x-1/2 rounded-full bg-amber-500/10 blur-[90px]"></div>
+      </div>
+      <div class="grid-bg pointer-events-none absolute inset-0" aria-hidden="true"></div>
+
+      <!-- ============================================================
+           FOLDER CARD (satu contoh, siap direplikasi)
+           Struktur z-index:
+             z-0  shell + tab  (kaca gelap, clip-path)
+             z-10 papers       (3 kertas absolute)
+             z-20 front glass  (kaca depan)
+             z-50 teks & tombol
+           ============================================================ -->
+      <article
+        class="folder-card group relative w-full max-w-[340px] select-none"
+        aria-label="Projects: 6 item"
+      >
+        <!-- Glow di bawah folder -->
+        <div
+          class="pointer-events-none absolute inset-x-10 -bottom-4 -z-10 h-16 rounded-full bg-violet-600/30 blur-2xl transition-opacity duration-500 group-hover:opacity-90"
+          aria-hidden="true"
+        ></div>
+
+        <div class="folder-body relative h-[320px] w-full">
+          <!-- ===== z-0: shell folder (rim + kaca + highlight tab) ===== -->
+          <div class="folder-shell absolute inset-0 z-0" aria-hidden="true">
+            <div class="folder-clip absolute inset-0 bg-white/20"></div>
+            <div class="folder-clip glass-shell absolute inset-[1.5px]"></div>
+            <div class="folder-clip tab-sheen absolute inset-[1.5px]"></div>
+          </div>
+
+          <!-- ===== z-10: tumpukan kertas (absolute, naik keluar folder) ===== -->
+          <div class="absolute inset-x-[8%] top-[54px] z-10 h-[160px]" aria-hidden="true">
+            <!-- Kertas belakang: biru -->
+            <div
+              class="paper paper-3 absolute inset-x-0 top-0 h-[150px] overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#2563eb] via-[#4338ca] to-[#6d28d9] shadow-[0_4px_10px_rgba(0,0,0,0.5),0_12px_26px_rgba(0,0,0,0.4)]"
+            >
+              <div class="flex items-center gap-1.5 border-b border-white/20 bg-black/20 px-3 py-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-white/80"></span>
+                <span class="h-1.5 w-1.5 rounded-full bg-white/55"></span>
+                <span class="h-1.5 w-1.5 rounded-full bg-white/35"></span>
+                <span class="ml-auto text-[7px] font-semibold tracking-widest text-white/70 uppercase">
+                  dashboard
+                </span>
+              </div>
+              <div class="px-3 pt-2">
+                <p class="text-[11px] font-semibold text-white">Analytics Dashboard</p>
+                <p class="text-[7px] tracking-widest text-white/60 uppercase">React · Chart.js</p>
+              </div>
+            </div>
+
+            <!-- Kertas tengah: ungu gelap -->
+            <div
+              class="paper paper-2 absolute inset-x-0 top-[14px] h-[150px] overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[#4c1d95] to-[#1e1b4b] shadow-[0_4px_10px_rgba(0,0,0,0.5),0_14px_28px_rgba(0,0,0,0.45)]"
+            >
+              <div class="flex h-full flex-col px-4 pt-3">
+                <span class="text-[7px] font-bold tracking-[0.28em] text-violet-300/80 uppercase">
+                  Case Study
+                </span>
+                <p class="mt-1 text-[12px] font-semibold leading-snug text-white/95">
+                  Mobile Banking UI
+                </p>
+                <p class="mt-1 text-[7px] tracking-wide text-violet-200/60">
+                  Research · Wireframe · Prototype
+                </p>
+              </div>
+            </div>
+
+            <!-- Kertas paling atas: putih terang (kontras) -->
+            <div
+              class="paper paper-1 absolute inset-x-0 top-[28px] h-[150px] overflow-hidden rounded-xl border border-black/10 bg-[#f5f4f1] shadow-[0_4px_10px_rgba(0,0,0,0.5),0_26px_40px_-8px_rgba(0,0,0,0.9)]"
+            >
+              <div class="flex h-full flex-col px-4 pt-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-[6.5px] font-bold tracking-[0.3em] text-neutral-500 uppercase">
+                    Certificate
+                  </span>
+                  <span
+                    class="rounded-full bg-emerald-600/10 px-1.5 py-0.5 text-[6px] font-bold tracking-wider text-emerald-700 uppercase"
+                  >
+                    Verified
+                  </span>
+                </div>
+                <p class="mt-1.5 font-serif text-[13px] font-semibold leading-snug text-neutral-900">
+                  Frontend Engineering
+                </p>
+                <div class="mt-2 h-px w-12 bg-neutral-300"></div>
+                <p class="mt-1.5 text-[6.5px] tracking-[0.18em] text-neutral-500 uppercase">
+                  Dicoding · 2025
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== z-20: kaca depan ===== -->
+          <div
+            class="glass-front absolute inset-x-[2.5%] bottom-[2.5%] z-20 h-[58%] overflow-hidden rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_-12px_36px_rgba(0,0,0,0.45)]"
+          >
+            <!-- kilau tipis di tepi atas kaca -->
+            <div
+              class="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.07] via-transparent to-black/25"
+              aria-hidden="true"
+            ></div>
+
+            <!-- Angka + label: pojok kiri bawah (z-50) -->
+            <div class="absolute bottom-4 left-4 z-50">
+              <p class="text-glow text-3xl font-bold leading-none tracking-tight text-white">6</p>
+              <p class="text-glow mt-1 text-xs font-medium tracking-wide text-gray-200">Projects</p>
+            </div>
+
+            <!-- Tombol ellipsis: pojok kanan bawah (z-50) -->
+            <button
+              type="button"
+              aria-label="More options for Projects"
+              class="absolute right-4 bottom-4 z-50 flex h-10 w-14 items-center justify-center gap-1.5 rounded-full border border-white/15 bg-black/55 px-3 text-white backdrop-blur-md transition-colors duration-200 hover:bg-black/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true"></span>
+              <span class="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true"></span>
+              <span class="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <!-- ===== Definisi clip-path (objectBoundingBox = responsif) ===== -->
+    <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id="folder-tab-clip" clipPathUnits="objectBoundingBox">
+          <path
+            d="M0.06,0.018 L0.40,0.018 C0.435,0.018 0.452,0.04 0.472,0.09 C0.49,0.137 0.517,0.166 0.575,0.168 L0.94,0.168 C0.974,0.168 1,0.194 1,0.228 L1,0.945 C1,0.978 0.974,1 0.94,1 L0.06,1 C0.026,1 0,0.978 0,0.945 L0,0.073 C0,0.04 0.026,0.018 0.06,0.018 Z"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  </body>
+</html>
