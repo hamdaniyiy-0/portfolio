@@ -123,6 +123,7 @@ export default function Contact() {
     try {
       setComments(await fetchComments())
     } catch (error) {
+      console.error('Gagal memuat komentar dari Supabase:', error)
       setCommentsError(error.message || 'Gagal memuat komentar.')
     } finally {
       setCommentsLoading(false)
@@ -182,6 +183,7 @@ export default function Contact() {
       if (photoInputRef.current) photoInputRef.current.value = ''
       await loadComments()
     } catch (error) {
+      console.error('Gagal mengirim komentar ke Supabase:', error)
       setCErrror(error.message || 'Komentar gagal dikirim. Periksa koneksi lalu coba lagi.')
     } finally {
       setSending(false)
