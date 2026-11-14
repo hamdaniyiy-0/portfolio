@@ -1,137 +1,103 @@
-/**
- * Komentar tersimpan LOCALLY di browser (localStorage) agar langsung tampil.
- * Salinan setiap komentar juga dikirim ke Netlify Forms (form "comment")
- * lewat fetch ke /__forms.html — lihat Contact.jsx.
- */
+import { supabase } from './supabaseClient'
 
-const KEY = 'portfolio-comments'
-const COOLDOWN_KEY = 'portfolio-comment-cooldown'
-const COOLDOWN_MS = 60 * 60 * 1000 // 1 jam (sama dengan referensi)
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024 // 5 MB
+const TABLE = 'comments'
+const BUCKET = 'comment-photos'
 
-function read() {
-  try {
-    const raw = localStorage.getItem(KEY)
-    const list = raw ? JSON.parse(raw) : []
-    return Array.isArray(list) ? list : []
-  } catch {
-    return []
+export const MAX_PHOTO_BYTES = 5 * 1024 * 1024 // 5 MB
+
+function ensureClient() {
+  if (!supabase) {
+    throw new Error(
+      'Layanan komentar belum dikonfigurasi. Isi VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY.',
+    )
   }
 }
 
-function write(list) {
-  localStorage.setItem(KEY, JSON.stringify(list)) // bisa melempar QuotaExceededError
-}
-
-export function loadComments() {
-  return read().sort((a, b) => b.createdAt - a.createdAt)
+/** Nama file unik & aman untuk Supabase Storage. */
+function makePhotoPath(file) {
+  const safeName = String(file.name || 'foto')
+    .toLowerCase()
+    .replace(/[^a-z0-9.]+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(-60)
+  const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  return `${unique}-${safeName}`
 }
 
 /**
- * Ambil komentar publik dari Netlify Function (data Netlify Forms).
- * @returns {Promise<Array<{id:string,name:string,message:string,createdAt:number}>|null>}
- *   null berarti function/API tidak tersedia → pemanggil pakai data lokal.
+ * Ambil komentar terbaru dari tabel `comments`.
+ * @returns {Promise<Array<{id:number,name:string,message:string,photo_url:string|null,created_at:string}>>}
  */
 export async function fetchComments() {
-  try {
-    // Cache-busting: sebagian browser/CDN bisa menyimpan respons GET function.
-    // Parameter unik + cache:'no-store' memastikan data selalu segar.
-    const response = await fetch(`/.netlify/functions/get-comments?t=${Date.now()}`, {
-      cache: 'no-store',
-      headers: {
-        Accept: 'application/json',
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
-      },
-    })
-    if (!response.ok) return null
+  ensureClient()
 
-    const data = await response.json()
-    if (!Array.isArray(data?.comments)) return null
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('id, name, message, photo_url, created_at')
+    .order('created_at', { ascending: false })
+    .limit(100)
 
-    return data.comments
-      .map((comment) => ({
-        id: String(comment.id || ''),
-        name: String(comment.name || '').slice(0, 50),
-        message: String(comment.message || '').slice(0, 500),
-        createdAt: Number(comment.createdAt),
-      }))
-      .filter((comment) => comment.name && comment.message && Number.isFinite(comment.createdAt))
-      .sort((a, b) => b.createdAt - a.createdAt)
-  } catch {
-    return null
+  if (error) {
+    throw new Error(`Gagal memuat komentar: ${error.message}`)
   }
-}
 
-export function commentCount() {
-  return read().length
-}
-
-export function getMaxPhotoBytes() {
-  return MAX_PHOTO_BYTES
+  return data ?? []
 }
 
 /**
- * Tambah komentar baru.
- * @returns {{ok: true, comments: array} | {ok: false, error: string}}
+ * Simpan komentar baru. Foto (opsional) diunggah lebih dulu ke bucket
+ * `comment-photos`, lalu URL publiknya disimpan di kolom `photo_url`.
  */
-export function addComment({ name, message, photo = null }) {
+export async function createComment({ name, message, photo = null }) {
+  ensureClient()
+
   const trimmedName = String(name || '').trim()
   const trimmedMessage = String(message || '').trim()
+
   if (!trimmedName || !trimmedMessage) {
-    return { ok: false, error: 'Nama dan komentar wajib diisi.' }
+    throw new Error('Nama dan komentar wajib diisi.')
   }
-  if (photo && photo.length > MAX_PHOTO_BYTES * 1.35) {
-    // perkiraan kasar dari dataURL; pemeriksaan presisi ada di pemilih file
-    return { ok: false, error: 'Ukuran file maksimal 5 MB.' }
+  if (trimmedName.length > 50) {
+    throw new Error('Nama maksimal 50 karakter.')
+  }
+  if (trimmedMessage.length > 500) {
+    throw new Error('Komentar maksimal 500 karakter.')
+  }
+  if (photo && photo.size > MAX_PHOTO_BYTES) {
+    throw new Error('Ukuran file maksimal 5 MB.')
   }
 
-  const list = read()
-  list.push({
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    name: trimmedName.slice(0, 50),
-    message: trimmedMessage.slice(0, 500),
-    photo,
-    createdAt: Date.now(),
-  })
+  let photoUrl = null
 
-  try {
-    write(list)
-  } catch {
-    return {
-      ok: false,
-      error: 'Gagal menyimpan komentar — penyimpanan browser penuh. Coba tanpa foto.',
+  if (photo) {
+    const filePath = makePhotoPath(photo)
+
+    const { error: uploadError } = await supabase.storage.from(BUCKET).upload(filePath, photo, {
+      cacheControl: '3600',
+      contentType: photo.type || 'image/jpeg',
+      upsert: false,
+    })
+
+    if (uploadError) {
+      throw new Error(`Gagal mengunggah foto: ${uploadError.message}`)
     }
+
+    photoUrl = supabase.storage.from(BUCKET).getPublicUrl(filePath).data.publicUrl
   }
 
-  return { ok: true, comments: loadComments() }
-}
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert({
+      name: trimmedName.slice(0, 50),
+      message: trimmedMessage.slice(0, 500),
+      photo_url: photoUrl,
+    })
+    .select('id, name, message, photo_url, created_at')
+    .single()
 
-/* ============ Cooldown anti-spam 1 jam ============ */
-export function getCooldownRemaining() {
-  try {
-    const until = Number(localStorage.getItem(COOLDOWN_KEY) || 0)
-    return Math.max(0, until - Date.now())
-  } catch {
-    return 0
+  if (error) {
+    throw new Error(`Gagal menyimpan komentar: ${error.message}`)
   }
-}
 
-export function startCooldown() {
-  try {
-    localStorage.setItem(COOLDOWN_KEY, String(Date.now() + COOLDOWN_MS))
-  } catch {
-    /* abaikan bila localStorage diblokir */
-  }
-}
-
-/** Sisa waktu -> teks "59 menit 12 detik" / "1 jam 5 menit". */
-export function formatRemaining(ms) {
-  const total = Math.ceil(ms / 1000)
-  const h = Math.floor(total / 3600)
-  const m = Math.floor((total % 3600) / 60)
-  const s = total % 60
-  if (h > 0) return `${h} jam ${m} menit`
-  if (m > 0) return `${m} menit ${s} detik`
-  return `${s} detik`
+  return data
 }
