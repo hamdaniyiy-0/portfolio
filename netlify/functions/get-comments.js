@@ -25,9 +25,13 @@ const json = (statusCode, payload) => ({
   statusCode,
   headers: {
     'Content-Type': 'application/json; charset=utf-8',
-    // Jangan di-cache: setelah kirim komentar, frontend langsung memanggil ulang
-    // endpoint ini dan harus mendapat data terbaru.
-    'Cache-Control': 'no-store',
+    // Jangan di-cache di browser maupun CDN Netlify: setelah kirim komentar,
+    // frontend langsung memanggil ulang endpoint ini dan harus dapat data baru.
+    'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+    Pragma: 'no-cache',
+    Expires: '0',
+    'CDN-Cache-Control': 'no-store',
+    'Netlify-CDN-Cache-Control': 'no-store',
   },
   body: JSON.stringify(payload),
 })

@@ -121,26 +121,64 @@ export default function Contact() {
   const [sending, setSending] = useState(false)
   const [visible, setVisible] = useState(PAGE_SIZE)
 
-  /** Ambil komentar dari Netlify Function; null = function belum tersedia. */
+  // Komentar yang baru dikirim dari perangkat ini tapi belum muncul di API
+  // (jeda propagasi Netlify Forms). Disimpan sebentar agar tidak "hilang"
+  // saat daftar server menggantikan daftar lokal.
+  const pendingRef = useRef([])
+  const syncTimers = useRef([])
+
+  /**
+   * Ambil komentar dari Netlify Function.
+   * Saat berhasil, daftar SERVER menjadi sumber kebenaran + komentar yang
+   * baru saja dikirim dari perangkat ini (maks. 2 menit).
+   * Saat function gagal (null), daftar lokal dibiarkan sebagai fallback.
+   */
   const refreshComments = async () => {
     const remote = await fetchComments()
     if (!remote) return
 
-    setComments((prev) => {
-      // Pertahankan komentar lokal yang baru dikirim tapi belum muncul di API
-      // (mis. jeda propagasi), maksimal 10 menit terakhir.
-      const recentLocal = prev.filter((c) => Date.now() - c.createdAt < 10 * 60 * 1000)
-      const pending = recentLocal.filter(
-        (c) => !remote.some((r) => r.name === c.name && r.message === c.message),
-      )
-      return [...pending, ...remote].sort((a, b) => b.createdAt - a.createdAt)
-    })
+    const now = Date.now()
+    const isSame = (a, b) => a.name === b.name && a.message === b.message
+
+    pendingRef.current = pendingRef.current.filter(
+      (pending) => pending.expiresAt > now && !remote.some((item) => isSame(item, pending)),
+    )
+
+    const merged = [...pendingRef.current, ...remote].sort((a, b) => b.createdAt - a.createdAt)
+    setComments(merged)
   }
 
   // Muat komentar saat halaman dibuka.
   useEffect(() => {
     refreshComments()
   }, [])
+
+  // Auto-refresh tiap 15 detik + saat tab kembali aktif/fokus, supaya
+  // komentar dari HP/pengunjung lain muncul di laptop tanpa reload.
+  useEffect(() => {
+    const POLL_MS = 15000
+    const tick = () => {
+      if (!document.hidden) refreshComments()
+    }
+    const id = setInterval(tick, POLL_MS)
+    document.addEventListener('visibilitychange', tick)
+    window.addEventListener('focus', tick)
+
+    return () => {
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', tick)
+      window.removeEventListener('focus', tick)
+    }
+  }, [])
+
+  // Bersihkan timer refresh tertunda saat komponen di-unmount.
+  useEffect(
+    () => () => {
+      syncTimers.current.forEach((timer) => clearTimeout(timer))
+      syncTimers.current = []
+    },
+    [],
+  )
 
   // Jaga angka di judul "Komentar (n)" tetap sinkron dengan daftar.
   useEffect(() => {
@@ -204,14 +242,37 @@ export default function Contact() {
         return
       }
 
+      const submittedAt = Date.now()
+      const pendingComment = {
+        id: `pending-${submittedAt}`,
+        name: cForm.name.trim().slice(0, 50),
+        message: cForm.message.trim().slice(0, 500),
+        photo: cForm.photo,
+        createdAt: submittedAt,
+        expiresAt: submittedAt + 2 * 60 * 1000,
+      }
+      // Tandai sebagai "menunggu API" agar tetap tampil sampai Netlify Forms
+      // selesai memprosesnya, tanpa membuat perangkat lain ikut menampilkannya.
+      pendingRef.current = [
+        pendingComment,
+        ...pendingRef.current.filter(
+          (item) => !(item.name === pendingComment.name && item.message === pendingComment.message),
+        ),
+      ]
+
       setComments(result.comments)
       setCount(commentCount())
       setCForm({ name: '', message: '', photo: null, photoName: '' })
       setVisible(PAGE_SIZE)
 
       // Ambil ulang dari Netlify Forms agar komentar baru (dan komentar orang
-      // lain) langsung tampil tanpa reload halaman.
+      // lain) langsung tampil tanpa reload halaman. Ulangi beberapa detik
+      // kemudian untuk mengantisipasi jeda propagasi API Netlify.
       refreshComments()
+      syncTimers.current.push(
+        setTimeout(refreshComments, 3000),
+        setTimeout(refreshComments, 10000),
+      )
     } catch (error) {
       setCErrror(error.message || 'Komentar gagal dikirim. Periksa koneksi lalu coba lagi.')
     } finally {

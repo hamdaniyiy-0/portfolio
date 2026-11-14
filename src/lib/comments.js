@@ -34,8 +34,15 @@ export function loadComments() {
  */
 export async function fetchComments() {
   try {
-    const response = await fetch('/.netlify/functions/get-comments', {
-      headers: { Accept: 'application/json' },
+    // Cache-busting: sebagian browser/CDN bisa menyimpan respons GET function.
+    // Parameter unik + cache:'no-store' memastikan data selalu segar.
+    const response = await fetch(`/.netlify/functions/get-comments?t=${Date.now()}`, {
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
     })
     if (!response.ok) return null
 
