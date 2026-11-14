@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Netlify Forms — Skeleton</title>
+  </head>
+
+  <body>
+    <!--
+      File ini TIDAK ditampilkan ke pengunjung. Tujuannya hanya agar Netlify
+      bisa mendeteksi form saat proses build (SPA/React tidak merender form
+      di HTML statis). Semua nama field di sini HARUS sama persis dengan
+      yang dikirim komponen Contact.jsx.
+    -->
+
+    <!-- ============ Form 1: Hubungi / contact ============ -->
+    <form name="contact" data-netlify="true" method="post" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <p hidden>
+        <label>Jangan diisi: <input name="bot-field" /></label>
+      </p>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
+
+    <!-- ============ Form 2: Komentar (+ upload Foto Profil) ============ -->
+    <form
+      name="comment"
+      data-netlify="true"
+      method="post"
+      enctype="multipart/form-data"
+      netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="comment" />
+      <p hidden>
+        <label>Jangan diisi: <input name="bot-field" /></label>
+      </p>
+      <input type="text" name="name" />
+      <textarea name="message"></textarea>
+      <input type="file" name="photo" accept="image/*" />
+    </form>
+  </body>
+</html>
