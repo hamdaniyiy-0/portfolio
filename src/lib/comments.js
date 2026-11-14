@@ -27,6 +27,35 @@ export function loadComments() {
   return read().sort((a, b) => b.createdAt - a.createdAt)
 }
 
+/**
+ * Ambil komentar publik dari Netlify Function (data Netlify Forms).
+ * @returns {Promise<Array<{id:string,name:string,message:string,createdAt:number}>|null>}
+ *   null berarti function/API tidak tersedia → pemanggil pakai data lokal.
+ */
+export async function fetchComments() {
+  try {
+    const response = await fetch('/.netlify/functions/get-comments', {
+      headers: { Accept: 'application/json' },
+    })
+    if (!response.ok) return null
+
+    const data = await response.json()
+    if (!Array.isArray(data?.comments)) return null
+
+    return data.comments
+      .map((comment) => ({
+        id: String(comment.id || ''),
+        name: String(comment.name || '').slice(0, 50),
+        message: String(comment.message || '').slice(0, 500),
+        createdAt: Number(comment.createdAt),
+      }))
+      .filter((comment) => comment.name && comment.message && Number.isFinite(comment.createdAt))
+      .sort((a, b) => b.createdAt - a.createdAt)
+  } catch {
+    return null
+  }
+}
+
 export function commentCount() {
   return read().length
 }

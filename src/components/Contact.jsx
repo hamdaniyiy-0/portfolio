@@ -1,19 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Check, ImagePlus, MessageSquare, Send, User, Mail, FileText } from 'lucide-react'
 import { socials } from '../data/portfolio'
 import {
   addComment,
   commentCount,
-  formatRemaining,
-  getCooldownRemaining,
+  fetchComments,
   getMaxPhotoBytes,
   loadComments,
-  startCooldown,
 } from '../lib/comments'
 import './Contact.css'
 
 const PAGE_SIZE = 5
-const COOLDOWN_TOTAL = 60 * 60 * 1000
 
 const SUBS = {
   GitHub: '@hamdaniyiy-0',
@@ -116,30 +113,39 @@ export default function Contact() {
     }
   }
 
-  /* ============ Komentar (localStorage) ============ */
+  /* ============ Komentar (Netlify Forms via Function + fallback localStorage) ============ */
   const [comments, setComments] = useState(() => loadComments())
   const [count, setCount] = useState(() => commentCount())
   const [cForm, setCForm] = useState({ name: '', message: '', photo: null, photoName: '' })
   const [cError, setCErrror] = useState('')
   const [sending, setSending] = useState(false)
   const [visible, setVisible] = useState(PAGE_SIZE)
-  const [remaining, setRemaining] = useState(() => getCooldownRemaining())
 
+  /** Ambil komentar dari Netlify Function; null = function belum tersedia. */
+  const refreshComments = async () => {
+    const remote = await fetchComments()
+    if (!remote) return
+
+    setComments((prev) => {
+      // Pertahankan komentar lokal yang baru dikirim tapi belum muncul di API
+      // (mis. jeda propagasi), maksimal 10 menit terakhir.
+      const recentLocal = prev.filter((c) => Date.now() - c.createdAt < 10 * 60 * 1000)
+      const pending = recentLocal.filter(
+        (c) => !remote.some((r) => r.name === c.name && r.message === c.message),
+      )
+      return [...pending, ...remote].sort((a, b) => b.createdAt - a.createdAt)
+    })
+  }
+
+  // Muat komentar saat halaman dibuka.
   useEffect(() => {
-    if (remaining <= 0) return undefined
-    const id = setInterval(() => {
-      const next = getCooldownRemaining()
-      setRemaining(next)
-      if (next <= 0) setComments(loadComments())
-    }, 1000)
-    return () => clearInterval(id)
-  }, [remaining > 0])
+    refreshComments()
+  }, [])
 
-  const cooldownLabel = useMemo(() => {
-    if (remaining <= 0) return 'Kirim Komentar'
-    if (remaining >= COOLDOWN_TOTAL) return 'Kirim lagi dalam 1 jam'
-    return `Kirim lagi ${formatRemaining(remaining)}`
-  }, [remaining])
+  // Jaga angka di judul "Komentar (n)" tetap sinkron dengan daftar.
+  useEffect(() => {
+    setCount(comments.length)
+  }, [comments])
 
   const pickPhoto = (event) => {
     const file = event.target.files?.[0]
@@ -159,7 +165,7 @@ export default function Contact() {
 
   const submitComment = async (event) => {
     event.preventDefault()
-    if (sending || getCooldownRemaining() > 0) return
+    if (sending) return
     setSending(true)
     setCErrror('')
 
@@ -200,10 +206,12 @@ export default function Contact() {
 
       setComments(result.comments)
       setCount(commentCount())
-      startCooldown()
-      setRemaining(getCooldownRemaining())
       setCForm({ name: '', message: '', photo: null, photoName: '' })
       setVisible(PAGE_SIZE)
+
+      // Ambil ulang dari Netlify Forms agar komentar baru (dan komentar orang
+      // lain) langsung tampil tanpa reload halaman.
+      refreshComments()
     } catch (error) {
       setCErrror(error.message || 'Komentar gagal dikirim. Periksa koneksi lalu coba lagi.')
     } finally {
@@ -419,31 +427,10 @@ export default function Contact() {
                 </p>
               )}
 
-              <button type="submit" className="contact-submit-btn" disabled={sending || remaining > 0}>
+              <button type="submit" className="contact-submit-btn" disabled={sending}>
                 <Send size={15} aria-hidden="true" />
-                <span>{sending ? 'Mengirim...' : cooldownLabel}</span>
+                <span>{sending ? 'Mengirim...' : 'Kirim Komentar'}</span>
               </button>
-
-              {remaining > 0 && (
-                <div
-                  className="contact-comment-cooldown"
-                  role="progressbar"
-                  aria-label={`Waktu tunggu komentar: ${formatRemaining(remaining)} tersisa`}
-                  aria-valuemin={0}
-                  aria-valuemax={COOLDOWN_TOTAL}
-                  aria-valuenow={remaining}
-                >
-                  <span
-                    className="contact-comment-cooldown-progress"
-                    style={{ width: `${(remaining / COOLDOWN_TOTAL) * 100}%` }}
-                  />
-                </div>
-              )}
-              {remaining > 0 && (
-                <span className="contact-comment-cooldown-label">
-                  Bisa komentar lagi dalam {formatRemaining(remaining)}
-                </span>
-              )}
             </form>
 
             <div className="contact-comments-list">
