@@ -138,6 +138,26 @@ export const certificates = [
   },
 ]
 
+/* ============ PENGHARGAAN / AWARDS ============
+   Ditampilkan di folder "Awards" pada section About.
+   Gambar memakai file yang tersedia di public/images/. */
+export const awards = [
+  {
+    title: '2026 National MikroTik Networking Olympiad',
+    issuer: 'MikroTik & Citraweb',
+    description:
+      'Participated in the 2026 National MikroTik Networking Olympiad for vocational high schools (SMK), demonstrating an interest in computer networking and MikroTik technologies.',
+    image: '/images/mikrotik.png',
+  },
+  {
+    title: 'Gemini Certified Student (K12)',
+    issuer: 'Google for Education',
+    description:
+      'Earned a student certification demonstrating knowledge, skills, and basic competencies in using Google AI in education.',
+    image: '/images/gemini.png',
+  },
+]
+
 /* ============ RIWAYAT PENDIDIKAN (jenjang sekolah) ============
    Ditampilkan di section Education (Experience.jsx), tepat di bawah About.
    Urutan = kronologis (SMP lebih dulu, lalu SMK).
@@ -177,7 +197,7 @@ export const experience = []
 export const stats = [
   { label: 'Projects', value: 3, icon: FolderGit2, detail: 'Karya yang dibuat' },
   { label: 'Certificates', value: 2, icon: ShieldCheck, detail: 'Skill yang divalidasi' },
-  { label: 'Awards', value: 1, icon: Trophy, detail: 'Pencapaian diraih' },
+  { label: 'Awards', value: 2, icon: Trophy, detail: 'Pencapaian diraih' },
 ]
 
 /* ============ SOSIAL MEDIA ============ */

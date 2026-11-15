@@ -558,8 +558,26 @@
   transform: scale(1.04);
 }
 
+.folder-preview-award {
+  z-index: 2;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: #fde68a;
+  background: #78350fcc;
+  border: 1px solid #fbbf2473;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px #00000059;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
 /* Dua sertifikat ditumpuk miring seperti tumpukan dokumen */
-.folder-previews--certificates .folder-preview--1 {
+.folder-previews--gallery .folder-preview--1 {
   top: 32px;
   left: 14%;
   right: 27%;
@@ -569,7 +587,7 @@
   z-index: 1;
 }
 
-.folder-previews--certificates .folder-preview--2 {
+.folder-previews--gallery .folder-preview--2 {
   top: 64px;
   left: 27%;
   right: 11%;
@@ -579,29 +597,29 @@
   z-index: 3;
 }
 
-.folder-previews--certificates .folder-preview-fade {
+.folder-previews--gallery .folder-preview-fade {
   height: 30%;
 }
 
 /* Fan-out khusus sertifikat: lebih lebar, tidak terlalu tinggi */
-.folder-card.is-open .folder-previews--certificates .folder-preview--1 {
+.folder-card.is-open .folder-previews--gallery .folder-preview--1 {
   --ty: -72px;
   --tx: -18px;
   --rot: -8deg;
 }
-.folder-card.is-open .folder-previews--certificates .folder-preview--2 {
+.folder-card.is-open .folder-previews--gallery .folder-preview--2 {
   --ty: -46px;
   --tx: 16px;
   --rot: 6deg;
 }
 
 @media (hover: hover) {
-  .folder-card:hover .folder-previews--certificates .folder-preview--1 {
+  .folder-card:hover .folder-previews--gallery .folder-preview--1 {
     --ty: -72px;
     --tx: -18px;
     --rot: -8deg;
   }
-  .folder-card:hover .folder-previews--certificates .folder-preview--2 {
+  .folder-card:hover .folder-previews--gallery .folder-preview--2 {
     --ty: -46px;
     --tx: 16px;
     --rot: 6deg;
@@ -949,10 +967,10 @@
   .folder-preview--3 {
     top: 122px;
   }
-  .folder-previews--certificates .folder-preview--1 {
+  .folder-previews--gallery .folder-preview--1 {
     top: 34px;
   }
-  .folder-previews--certificates .folder-preview--2 {
+  .folder-previews--gallery .folder-preview--2 {
     top: 66px;
   }
 }

@@ -9,7 +9,7 @@ import {
   Trophy,
   X,
 } from 'lucide-react'
-import { certificates, education, experience, projects, stats } from '../data/portfolio'
+import { awards, certificates, education, experience, projects, stats } from '../data/portfolio'
 import './Experience.css'
 
 /**
@@ -178,6 +178,19 @@ function getPreviews(stat) {
       category: 'Certificates',
     }))
   }
+  if (stat.label === 'Awards') {
+    return awards.slice(0, 3).map((award) => ({
+      key: award.title,
+      title: award.title,
+      sub: award.issuer,
+      meta: award.issuer,
+      description: award.description,
+      image: award.image,
+      icon: Trophy,
+      tone: 'light',
+      category: 'Awards',
+    }))
+  }
   return [
     {
       key: stat.label,
@@ -210,13 +223,20 @@ function FolderPreview({ preview, index, onOpen }) {
       aria-label={`Buka ${preview.title}`}
     >
       {preview.image ? (
-        <img
-          className="folder-preview-image"
-          src={preview.image}
-          alt={`Sertifikat ${preview.title}`}
-          loading="lazy"
-          decoding="async"
-        />
+        <>
+          <img
+            className="folder-preview-image"
+            src={preview.image}
+            alt={`Sertifikat ${preview.title}`}
+            loading="lazy"
+            decoding="async"
+          />
+          {preview.category === 'Awards' && Icon && (
+            <span className="folder-preview-award" aria-hidden="true">
+              <Icon size={12} />
+            </span>
+          )}
+        </>
       ) : preview.tone === 'light' ? (
         <>
           <span className="folder-preview-issuer">{preview.sub}</span>
@@ -308,7 +328,7 @@ function FolderCard({ stat }) {
 
         <div
           className={`folder-previews${previews.length === 1 ? ' folder-previews--single' : ''}${
-            stat.label === 'Certificates' ? ' folder-previews--certificates' : ''
+            previews.some((preview) => preview.image) ? ' folder-previews--gallery' : ''
           }`}
         >
           {previews.map((preview, index) => (
