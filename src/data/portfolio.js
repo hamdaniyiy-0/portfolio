@@ -118,11 +118,24 @@ export const techStack = [
   { name: 'Vite', logo: 'vite' },
 ]
 
-/* ============ SERTIFIKAT ============ */
+/* ============ SERTIFIKAT ============
+   Gambar disimpan di public/images/ dan diakses lewat path absolut. */
 export const certificates = [
-  { name: 'Belajar Dasar Pemrograman Web', issuer: 'Dicoding', year: '2024' },
-  { name: 'Front-End Web with React', issuer: 'FreeCodeCamp', year: '2025' },
-  { name: 'JavaScript Algorithms & Data Structures', issuer: 'FreeCodeCamp', year: '2025' },
+  {
+    title: 'Olimpiade Jaringan Mikrotik 2026',
+    issuer: 'Mikrotik & Citraweb Solusi Teknologi',
+    date: '03 September 2026',
+    image: '/images/mikrotik.jpg',
+    description: 'Peserta dalam Olimpiade Jaringan Mikrotik Antar SMK Tingkat Nasional.',
+  },
+  {
+    title: 'Gemini Certified Student (K12)',
+    issuer: 'Google for Education',
+    date: '27 Agustus 2026',
+    image: '/images/gemini.jpg',
+    description:
+      'Sertifikasi kemampuan dasar penggunaan Google AI (Gemini) dalam bidang pendidikan.',
+  },
 ]
 
 /* ============ RIWAYAT PENDIDIKAN (jenjang sekolah) ============
@@ -163,7 +176,7 @@ export const experience = []
    `detail` = kalimat kecil di bawah label (meniru referensi). */
 export const stats = [
   { label: 'Projects', value: 3, icon: FolderGit2, detail: 'Karya yang dibuat' },
-  { label: 'Certificates', value: 3, icon: ShieldCheck, detail: 'Skill yang divalidasi' },
+  { label: 'Certificates', value: 2, icon: ShieldCheck, detail: 'Skill yang divalidasi' },
   { label: 'Awards', value: 1, icon: Trophy, detail: 'Pencapaian diraih' },
 ]
 

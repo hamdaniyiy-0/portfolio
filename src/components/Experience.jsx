@@ -167,10 +167,11 @@ function getPreviews(stat) {
   }
   if (stat.label === 'Certificates') {
     return certificates.slice(0, 3).map((certificate) => ({
-      key: certificate.name,
-      title: certificate.name,
-      sub: `${certificate.issuer} · ${certificate.year}`,
-      meta: `${certificate.issuer} · ${certificate.year}`,
+      key: certificate.title,
+      title: certificate.title,
+      sub: `${certificate.issuer} · ${certificate.date}`,
+      meta: `${certificate.issuer} · ${certificate.date}`,
+      description: certificate.description,
       icon: ShieldCheck,
       tone: 'light',
       category: 'Certificates',

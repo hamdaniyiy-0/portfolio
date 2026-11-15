@@ -1,5 +1,13 @@
-import { useState } from 'react'
-import { ArrowUpRight, Award, FolderGit2, ShieldCheck } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import {
+  ArrowUpRight,
+  Award,
+  FolderGit2,
+  ImageOff,
+  Maximize2,
+  ShieldCheck,
+  X,
+} from 'lucide-react'
 import { projects, certificates, techStack } from '../data/portfolio'
 import { navigate } from '../hooks/useRoute'
 import useReveal from '../hooks/useReveal'
@@ -14,19 +22,76 @@ const TABS = [
   { id: 'skills', label: 'Tech Stack', icon: Award },
 ]
 
+/** Gambar sertifikat dengan fallback bila file belum tersedia. */
+function CertificateThumb({ certificate, onOpen }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) {
+    return (
+      <div className="portfolio-cert-media portfolio-cert-media--fallback">
+        <span className="portfolio-cert-fallback">
+          <ImageOff size={30} aria-hidden="true" />
+          <span>Gambar sertifikat belum tersedia</span>
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      className="portfolio-cert-media"
+      onClick={() => onOpen(certificate)}
+      aria-label={`Perbesar sertifikat ${certificate.title}`}
+    >
+      <img
+        className="portfolio-cert-image"
+        src={certificate.image}
+        alt={`Sertifikat ${certificate.title} — ${certificate.issuer}`}
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+      <span className="portfolio-cert-zoom" aria-hidden="true">
+        <Maximize2 size={15} />
+        Lihat
+      </span>
+    </button>
+  )
+}
+
 /**
  * Section `#Portofolio` — tab bar Projects / Certificates / Tech Stack.
  * (Tab Achievements dihapus: datanya tidak ada, jadi tidak dibuat.)
  * - Projects : kartu ber-border liquid-metal + tombol "Details" -> route
  *              `/project/<judul>` (tanpa modal, sesuai perilaku referensi).
- * - Certificates : kartu sertifikat teks (tanpa gambar → tanpa viewer).
+ * - Certificates : kartu bergambar + lightbox (klik gambar untuk memperbesar).
  * - Tech Stack : kartu glow tepi yang mengikuti kursor.
  */
 export default function Portfolio() {
   const [tab, setTab] = useState('projects')
+  const [activeCert, setActiveCert] = useState(null)
   useReveal({ key: tab })
 
   const openProject = (title) => navigate(`/project/${encodeURIComponent(title)}`)
+
+  /** Tutup lightbox dengan Esc + kunci scroll halaman selama terbuka. */
+  useEffect(() => {
+    if (!activeCert) return
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setActiveCert(null)
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [activeCert])
 
   return (
     <section className="portfolio-root-section" id="Portofolio" aria-labelledby="portfolio-section-heading">
@@ -105,15 +170,18 @@ export default function Portfolio() {
             {certificates.map((c, i) => (
               <article
                 className="portfolio-cert-card reveal"
-                key={c.name}
+                key={c.title}
                 style={{ '--reveal-delay': `${i * 0.08}s` }}
               >
-                <div className="portfolio-cert-preview">
-                  <div className="portfolio-cert-paper">
+                <CertificateThumb certificate={c} onOpen={setActiveCert} />
+
+                <div className="portfolio-cert-body">
+                  <div className="portfolio-cert-meta">
                     <span className="portfolio-cert-issuer">{c.issuer}</span>
-                    <h3 className="portfolio-cert-name">{c.name}</h3>
-                    <span className="portfolio-cert-year">{c.year}</span>
+                    <span className="portfolio-cert-date">{c.date}</span>
                   </div>
+                  <h3 className="portfolio-cert-title">{c.title}</h3>
+                  <p className="portfolio-cert-desc">{c.description}</p>
                 </div>
               </article>
             ))}
@@ -139,6 +207,41 @@ export default function Portfolio() {
           </div>
         )}
       </div>
+
+      {/* ============ Lightbox sertifikat ============ */}
+      {activeCert && (
+        <div className="portfolio-cert-modal" onClick={() => setActiveCert(null)}>
+          <figure
+            className="portfolio-cert-modal-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Sertifikat ${activeCert.title}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="portfolio-cert-modal-close"
+              onClick={() => setActiveCert(null)}
+              aria-label="Tutup pratinjau sertifikat"
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
+
+            <img
+              className="portfolio-cert-modal-image"
+              src={activeCert.image}
+              alt={`Sertifikat ${activeCert.title} — ${activeCert.issuer}`}
+            />
+
+            <figcaption className="portfolio-cert-modal-caption">
+              <strong>{activeCert.title}</strong>
+              <span>
+                {activeCert.issuer} · {activeCert.date}
+              </span>
+            </figcaption>
+          </figure>
+        </div>
+      )}
     </section>
   )
 }
