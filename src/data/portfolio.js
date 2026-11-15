@@ -125,14 +125,14 @@ export const certificates = [
     title: 'Olimpiade Jaringan Mikrotik 2026',
     issuer: 'Mikrotik & Citraweb Solusi Teknologi',
     date: '03 September 2026',
-    image: '/images/mikrotik.jpg',
+    image: '/images/mikrotik.png',
     description: 'Peserta dalam Olimpiade Jaringan Mikrotik Antar SMK Tingkat Nasional.',
   },
   {
     title: 'Gemini Certified Student (K12)',
     issuer: 'Google for Education',
     date: '27 Agustus 2026',
-    image: '/images/gemini.jpg',
+    image: '/images/gemini.png',
     description:
       'Sertifikasi kemampuan dasar penggunaan Google AI (Gemini) dalam bidang pendidikan.',
   },
