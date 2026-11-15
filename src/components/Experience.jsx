@@ -172,6 +172,7 @@ function getPreviews(stat) {
       sub: `${certificate.issuer} · ${certificate.date}`,
       meta: `${certificate.issuer} · ${certificate.date}`,
       description: certificate.description,
+      image: certificate.image,
       icon: ShieldCheck,
       tone: 'light',
       category: 'Certificates',
@@ -201,12 +202,22 @@ function FolderPreview({ preview, index, onOpen }) {
   return (
     <button
       type="button"
-      className={`folder-preview folder-preview--${index + 1} folder-preview--${preview.tone}`}
+      className={`folder-preview folder-preview--${index + 1} folder-preview--${preview.tone}${
+        preview.image ? ' folder-preview--image' : ''
+      }`}
       style={preview.bg ? { backgroundImage: preview.bg } : undefined}
       onClick={() => onOpen(preview)}
       aria-label={`Buka ${preview.title}`}
     >
-      {preview.tone === 'light' ? (
+      {preview.image ? (
+        <img
+          className="folder-preview-image"
+          src={preview.image}
+          alt={`Sertifikat ${preview.title}`}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : preview.tone === 'light' ? (
         <>
           <span className="folder-preview-issuer">{preview.sub}</span>
           <span className="folder-preview-title">{preview.title}</span>
@@ -295,7 +306,11 @@ function FolderCard({ stat }) {
           <path d={FOLDER_PATH} vectorEffect="non-scaling-stroke" />
         </svg>
 
-        <div className={`folder-previews${previews.length === 1 ? ' folder-previews--single' : ''}`}>
+        <div
+          className={`folder-previews${previews.length === 1 ? ' folder-previews--single' : ''}${
+            stat.label === 'Certificates' ? ' folder-previews--certificates' : ''
+          }`}
+        >
           {previews.map((preview, index) => (
             <FolderPreview key={preview.key} preview={preview} index={index} onOpen={setActive} />
           ))}
@@ -363,13 +378,25 @@ function FolderCard({ stat }) {
               </button>
 
               <div
-                className={`folder-modal__visual folder-modal__visual--${active.tone}`}
+                className={`folder-modal__visual folder-modal__visual--${active.tone}${
+                  active.image ? ' folder-modal__visual--image' : ''
+                }`}
                 style={active.bg ? { backgroundImage: active.bg } : undefined}
               >
-                {active.icon && (
-                  <active.icon className="folder-modal__icon" size={44} aria-hidden="true" />
+                {active.image ? (
+                  <img
+                    className="folder-modal__image"
+                    src={active.image}
+                    alt={`Sertifikat ${active.title}`}
+                  />
+                ) : (
+                  <>
+                    {active.icon && (
+                      <active.icon className="folder-modal__icon" size={44} aria-hidden="true" />
+                    )}
+                    <span className="folder-modal__tag">{active.category}</span>
+                  </>
                 )}
-                <span className="folder-modal__tag">{active.category}</span>
               </div>
 
               <div className="folder-modal__body">

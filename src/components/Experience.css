@@ -532,6 +532,82 @@
   color: #16202e;
 }
 
+/* ============ Preview sertifikat (gambar asli) ============ */
+.folder-preview--image {
+  padding: 5px;
+  background: #0b111b;
+  border-color: #ffffff2e;
+}
+
+.folder-preview--image::after {
+  background: linear-gradient(180deg, #ffffff26, #0000 26%, #0000 68%, #00000059);
+}
+
+.folder-preview-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* sertifikat portrait & landscape tidak terpotong */
+  border-radius: 6px;
+  background: #f8fafc;
+  box-shadow: 0 5px 16px #00000066;
+  transition: transform 0.35s ease;
+}
+
+.folder-preview--image:hover .folder-preview-image {
+  transform: scale(1.04);
+}
+
+/* Dua sertifikat ditumpuk miring seperti tumpukan dokumen */
+.folder-previews--certificates .folder-preview--1 {
+  top: 32px;
+  left: 14%;
+  right: 27%;
+  height: 134px;
+  opacity: 0.9;
+  --rot: -5deg;
+  z-index: 1;
+}
+
+.folder-previews--certificates .folder-preview--2 {
+  top: 64px;
+  left: 27%;
+  right: 11%;
+  height: 140px;
+  opacity: 1;
+  --rot: 3.5deg;
+  z-index: 3;
+}
+
+.folder-previews--certificates .folder-preview-fade {
+  height: 30%;
+}
+
+/* Fan-out khusus sertifikat: lebih lebar, tidak terlalu tinggi */
+.folder-card.is-open .folder-previews--certificates .folder-preview--1 {
+  --ty: -72px;
+  --tx: -18px;
+  --rot: -8deg;
+}
+.folder-card.is-open .folder-previews--certificates .folder-preview--2 {
+  --ty: -46px;
+  --tx: 16px;
+  --rot: 6deg;
+}
+
+@media (hover: hover) {
+  .folder-card:hover .folder-previews--certificates .folder-preview--1 {
+    --ty: -72px;
+    --tx: -18px;
+    --rot: -8deg;
+  }
+  .folder-card:hover .folder-previews--certificates .folder-preview--2 {
+    --ty: -46px;
+    --tx: 16px;
+    --rot: 6deg;
+  }
+}
+
 .folder-preview-fade {
   pointer-events: none;
   background: linear-gradient(180deg, #0000, #090d14b8 55%, #090d14eb);
@@ -711,6 +787,27 @@
 .folder-modal__visual--light::after {
   background: linear-gradient(180deg, #0000 40%, #e2e8f1b8);
 }
+.folder-modal__visual--image {
+  height: min(42vh, 340px);
+  padding: clamp(10px, 2vw, 18px);
+  background: #080d15;
+  place-items: center;
+}
+.folder-modal__visual--image::after {
+  display: none;
+}
+.folder-modal__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(min(42vh, 340px) - 36px);
+  margin: 0 auto;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f8fafc;
+  box-shadow: 0 14px 38px #00000080;
+}
 .folder-modal__icon {
   z-index: 1;
   position: relative;
@@ -851,6 +948,12 @@
   }
   .folder-preview--3 {
     top: 122px;
+  }
+  .folder-previews--certificates .folder-preview--1 {
+    top: 34px;
+  }
+  .folder-previews--certificates .folder-preview--2 {
+    top: 66px;
   }
 }
 
