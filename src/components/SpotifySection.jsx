@@ -1,11 +1,11 @@
 import { ExternalLink } from 'lucide-react'
-import CodeWidget from './CodeWidget'
+import Terminal from './Terminal'
 import './SpotifySection.css'
 
 /**
  * Section "Code a Little. Create a Lot." — kartu gradien 2 kolom:
  * salinan kiri + tombol "Explore My Projects" (smooth scroll ke section
- * Portofolio di halaman yang sama), panel CodeWidget di kanan.
+ * Portofolio di halaman yang sama), terminal interaktif di kanan.
  */
 export default function SpotifySection() {
   const goToProjects = (event) => {
@@ -36,7 +36,7 @@ export default function SpotifySection() {
           </a>
         </div>
 
-        <CodeWidget />
+        <Terminal />
       </div>
     </section>
   )
