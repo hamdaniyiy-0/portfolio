@@ -37,7 +37,7 @@ if (!supabaseUrl || !supabaseAnonKey || !urlValid) {
     urlTerbaca: supabaseUrl || '(kosong)',
     keyTerbaca: supabaseAnonKey ? '(ada)' : '(kosong)',
     urlValid,
-    contohBenar: 'https://syherqcsflinjvgleip.supabase.co',
+    contohBenar: 'https://syherqcsfilnjjvgleip.supabase.co',
   })
 } else {
   try {
