@@ -55,7 +55,7 @@ node scripts/shots-new.mjs     # screenshot fitur baru (bento, command menu, hov
 ```
 portfolio/
 ├── public/
-│   ├── favicon.svg
+│   ├── logo.png
 │   ├── foto-asli.png           # hasil cutout (latar merah sudah dihapus)
 │   ├── foto-asli-ring.png      # mask cincin siluet untuk beam putih
 │   └── card-front.png / card-back.png / band.png   # kartu Lanyard (milik Anda)
