@@ -1,0 +1,35 @@
+# ============================================================
+# Cloudflare Workers — konfigurasi deploy portofolio
+# ============================================================
+# Worker/Pages project name di Cloudflare.
+name = "portfolio"
+
+# Tanggal kompatibilitas runtime Workers.
+compatibility_date = "2026-11-01"
+
+# ------------------------------------------------------------
+# Static assets: hasil `npm run build` (folder dist).
+# Fallback SPA supaya refresh di URL dalam tetap memuat index.html.
+# ------------------------------------------------------------
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"
+
+# ------------------------------------------------------------
+# Environment variables (runtime Worker).
+#
+# CATATAN PENTING:
+# `[vars]` di bawah ini adalah variabel RUNTIME. Vite membaca
+# `import.meta.env.VITE_*` saat BUILD, jadi variabel ini TIDAK
+# otomatis masuk ke bundle. Agar terbaca saat build di Cloudflare,
+# isi juga VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY di:
+#   Cloudflare Dashboard -> Workers & Pages -> portfolio
+#   -> Settings -> Build -> Variables and Secrets (Build variables)
+# lalu redeploy.
+#
+# Key di bawah adalah publishable/anon key yang memang dipakai
+# di browser (bukan service_role/secret key).
+# ------------------------------------------------------------
+[vars]
+VITE_SUPABASE_URL = "https://syherqcsfilnjjvgleip.supabase.co"
+VITE_SUPABASE_ANON_KEY = "sb_publishable_4aUny0kXZrgVSQ2S0_53uQ_w3Xfdpmf"
