@@ -426,3 +426,13 @@ node scripts/cutout-photo.mjs   # buat foto-asli.png (latar dihapus) + ring silu
 
 Script memastikan tidak ada error console, WebGL hidup, semua `id` section
 ada, dan menghasilkan screenshot hero/light/mobile ke folder `scripts/`.
+
+---
+
+## ☁️ Deploy Cloudflare
+
+- Build command: `npm run build`, output directory: `dist`.
+- `VITE_SUPABASE_URL` dan `VITE_SUPABASE_ANON_KEY` diisi di dashboard Cloudflare
+  (Workers & Pages → portfolio → Settings → Build → Variables and Secrets),
+  bukan di `wrangler.toml`, supaya tidak duplikat dengan konfigurasi runtime.
+- File `.env` dan `.env.production` tidak di-commit; lihat `.gitignore`.
