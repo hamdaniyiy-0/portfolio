@@ -164,15 +164,15 @@ export const awards = [
    - `level`  -> subtitle bila tidak ada `major`
    - `major`  -> jurusan (menggantikan `level` sebagai subtitle)
    - `tag`    -> pil kecil di bawah jurusan (opsional)
-   - `logo`   -> file di folder `public/`. Logo sekolah transparan saat ini
-                 ada di `public/logo-sekolah.png` (bisa diganti kapan saja).
+   - `logo`   -> file di folder `public/`, ditulis sebagai path absolut
+                 (contoh: `/images/logo-alhadiid.png`).
                  Bila gambar gagal dimuat, ikon kelulusan dipakai otomatis. */
 export const education = [
   {
     school: 'SMP AL-HADIID CILEUNGSI',
     level: 'Sekolah Menengah Pertama',
     years: '2022 – 2025',
-    logo: '/logo-sekolah.png',
+    logo: '/images/logo-alhadiid.png',
   },
   {
     school: 'SMK AL-HADIID 1 CILEUNGSI',
