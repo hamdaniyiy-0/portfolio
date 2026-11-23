@@ -77,7 +77,13 @@ function TimelineLogo({ item, FallbackIcon }) {
   return (
     <span className="timeline-logo" aria-hidden="true">
       {showImage ? (
-        <img src={item.logo} alt="" loading="lazy" onError={() => setFailed(true)} />
+        <img
+          className={`timeline-logo__img${item.logoBadge ? ' timeline-logo__img--badge' : ''}`}
+          src={item.logo}
+          alt=""
+          loading="lazy"
+          onError={() => setFailed(true)}
+        />
       ) : (
         <FallbackIcon size={16} />
       )}
@@ -463,6 +469,7 @@ export default function Experience() {
     detail: item.detail,
     years: item.years,
     logo: item.logo,
+    logoBadge: item.logoBadge,
     icon: item.icon,
   }))
 

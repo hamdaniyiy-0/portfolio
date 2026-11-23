@@ -160,14 +160,22 @@ export const awards = [
 
 /* ============ RIWAYAT PENDIDIKAN (jenjang sekolah) ============
    Ditampilkan di section Education (Experience.jsx), tepat di bawah About.
-   Urutan = kronologis (SMP lebih dulu, lalu SMK).
+   Urutan = kronologis (SD lebih dulu, lalu SMP, lalu SMK).
    - `level`  -> subtitle bila tidak ada `major`
    - `major`  -> jurusan (menggantikan `level` sebagai subtitle)
    - `tag`    -> pil kecil di bawah jurusan (opsional)
    - `logo`   -> file di folder `public/`, ditulis sebagai path absolut
                  (contoh: `/images/logo-alhadiid.png`).
+   - `logoBadge` -> beri latar putih bulat + padding pada logo (opsional).
                  Bila gambar gagal dimuat, ikon kelulusan dipakai otomatis. */
 export const education = [
+  {
+    school: 'SDN PASIRANGIN 03',
+    level: 'Sekolah Dasar',
+    years: '2015 – 2021',
+    logo: '/logo-sd.png',
+    logoBadge: true,
+  },
   {
     school: 'SMP AL-HADIID CILEUNGSI',
     level: 'Sekolah Menengah Pertama',
