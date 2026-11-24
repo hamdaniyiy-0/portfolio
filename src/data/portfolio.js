@@ -193,12 +193,34 @@ export const education = [
 ]
 
 /* ============ PENGALAMAN / RIWAYAT KERJA ============
-   Sengaja masih kosong — isi dengan data asli milikmu agar kolom
-   "Experience" otomatis muncul di samping Education.
+   Tampil di kolom kanan section Education (Experience.jsx).
    Bentuk data (urutkan dari yang terbaru):
-   { company: 'Nama instansi', role: 'Jabatan', detail: 'Lokasi · Detail',
-     years: '2025 – Sekarang', icon: OpsionalIkonLucide } */
-export const experience = []
+   - `title`  -> judul peran/kegiatan (baris utama kartu)
+   - `company`-> instansi/organisasi (subtitle)
+   - `type`   -> pil kecil di bawah subtitle
+   - `years`  -> badge tahun di kanan atas kartu
+   - `logo`   -> opsional, file di folder `public/`
+   - `logoBadge` -> opsional, latar putih bulat untuk logo persegi */
+export const experience = [
+  {
+    title: 'Google Student Ambassador',
+    company: 'Universitas Brawijaya',
+    type: 'Ambassador',
+    years: '2025 – Present',
+  },
+  {
+    title: 'Google Developer Groups (GDGs) on Campus',
+    company: 'Universitas Brawijaya',
+    type: 'Community',
+    years: '2025 – 2026',
+  },
+  {
+    title: 'Staff Technology | UI/UX Designer',
+    company: 'Hology 9.0',
+    type: 'Staff',
+    years: '2026',
+  },
+]
 
 /* ============ STATISTIK ============
    `detail` = kalimat kecil di bawah label (meniru referensi). */

@@ -29,9 +29,14 @@
 }
 
 /* ============ Timeline ============ */
+/* Dua kolom (Education | Experience) dengan batas tinggi yang sama.
+   Masing-masing kolom scroll sendiri di desktop; di mobile batas
+   tinggi dilepas supaya halaman memanjang normal. */
 .experience-timeline {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(32px, 5vw, 76px);
+  align-items: start;
+  max-height: min(78vh, 600px);
   display: grid;
 }
 /* Hanya Education (Experience belum ada datanya) → satu kolom di tengah */
@@ -40,6 +45,43 @@
   max-width: 660px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.timeline-column {
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(78vh, 600px);
+  display: flex;
+}
+
+/* Area scroll internal. Padding bawah menjaga garis/panel terakhir
+   tidak terpotong tepi scrollbar; padding kanan memberi jarak teks. */
+.timeline-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 16px;
+  padding-bottom: 24px;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff26 transparent;
+}
+.timeline-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.timeline-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.timeline-scroll::-webkit-scrollbar-thumb {
+  background: #ffffff1f;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+.timeline-scroll::-webkit-scrollbar-thumb:hover {
+  background: #ffffff38;
+  background-clip: padding-box;
 }
 
 .timeline-title {
@@ -950,6 +992,17 @@
   .experience-timeline {
     grid-template-columns: minmax(0, 1fr);
     gap: 40px;
+    max-height: none;
+  }
+  /* Mobile: tidak ada scroll internal, konten memanjang normal. */
+  .timeline-column {
+    max-height: none;
+  }
+  .timeline-scroll {
+    overflow: visible;
+    padding-right: 0;
+    padding-bottom: 0;
+    scrollbar-gutter: auto;
   }
 }
 
@@ -1011,6 +1064,12 @@
   .timeline-head {
     grid-template-columns: auto minmax(0, 1fr);
     row-gap: 4px;
+  }
+  /* Di ponsel judul panjang (mis. GDGs on Campus) dibuat membungkus
+     agar tidak terpotong elipsis. */
+  .timeline-head h3 {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
   .timeline-logo,
   .timeline-logo img {

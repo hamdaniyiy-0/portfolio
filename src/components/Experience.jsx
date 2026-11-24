@@ -133,18 +133,20 @@ function Timeline({ title, items }) {
   return (
     <div className="timeline-column">
       <h2 className="timeline-title">{title}</h2>
-      <ol className="timeline-list">
-        {items.map((item, index) => (
-          <TimelineItem
-            key={item.name}
-            item={item}
-            index={index}
-            active={index === activeIndex}
-            onActivate={() => setActiveIndex(index)}
-            FallbackIcon={FallbackIcon}
-          />
-        ))}
-      </ol>
+      <div className="timeline-scroll">
+        <ol className="timeline-list">
+          {items.map((item, index) => (
+            <TimelineItem
+              key={item.name}
+              item={item}
+              index={index}
+              active={index === activeIndex}
+              onActivate={() => setActiveIndex(index)}
+              FallbackIcon={FallbackIcon}
+            />
+          ))}
+        </ol>
+      </div>
     </div>
   )
 }
@@ -474,12 +476,13 @@ export default function Experience() {
   }))
 
   const experienceItems = experience.map((item) => ({
-    name: item.company,
-    role: item.role,
-    tag: item.tag,
+    name: item.title,
+    role: item.company,
+    tag: item.type,
     detail: item.detail,
     years: item.years,
     logo: item.logo,
+    logoBadge: item.logoBadge,
     icon: item.icon,
   }))
 
