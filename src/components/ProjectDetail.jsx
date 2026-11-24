@@ -36,6 +36,7 @@ const TECH_LOGOS = {
 export default function ProjectDetail({ slug }) {
   const project = projects.find((p) => p.title === slug)
   const ProjectIcon = project?.icon
+  const previewImage = project ? project.preview || project.image : ''
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' })
@@ -115,9 +116,14 @@ export default function ProjectDetail({ slug }) {
           </div>
 
           <BorderGlowCard className="project-detail-preview-glow">
-            <div className="project-detail-preview">
-              {project.preview ? (
-                <img src={project.preview} alt={`Tampilan ${project.title}`} loading="lazy" />
+            <div className={`project-detail-preview${previewImage ? ' has-image' : ''}`}>
+              {previewImage ? (
+                <img
+                  src={previewImage}
+                  alt={`Tampilan ${project.title}`}
+                  loading="lazy"
+                  decoding="async"
+                />
               ) : (
                 <div className="project-detail-preview-placeholder">
                   <div className="project-detail-preview-window" aria-hidden="true">

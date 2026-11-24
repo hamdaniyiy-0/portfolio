@@ -170,6 +170,8 @@ function getPreviews(stat) {
       tech: project.tech,
       icon: project.icon,
       bg: project.gradient,
+      image: project.image,
+      imageFit: 'cover',
       tone: 'dark',
       category: 'Projects',
     }))
@@ -234,9 +236,11 @@ function FolderPreview({ preview, index, onOpen }) {
       {preview.image ? (
         <>
           <img
-            className="folder-preview-image"
+            className={`folder-preview-image${
+              preview.imageFit === 'cover' ? ' folder-preview-image--cover' : ''
+            }`}
             src={preview.image}
-            alt={`Sertifikat ${preview.title}`}
+            alt={preview.title}
             loading="lazy"
             decoding="async"
           />
@@ -338,7 +342,7 @@ function FolderCard({ stat }) {
         <div
           className={`folder-previews${previews.length === 1 ? ' folder-previews--single' : ''}${
             previews.some((preview) => preview.image) ? ' folder-previews--gallery' : ''
-          }`}
+          }${previews.length === 3 ? ' folder-previews--count-3' : ''}`}
         >
           {previews.map((preview, index) => (
             <FolderPreview key={preview.key} preview={preview} index={index} onOpen={setActive} />

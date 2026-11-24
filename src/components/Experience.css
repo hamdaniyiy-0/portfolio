@@ -600,6 +600,11 @@
   box-shadow: 0 5px 16px #00000066;
   transition: transform 0.35s ease;
 }
+/* Thumbnail foto/screenshot: isi penuh kotak tanpa celah. */
+.folder-preview-image--cover {
+  object-fit: cover;
+  object-position: center;
+}
 
 .folder-preview--image:hover .folder-preview-image {
   transform: scale(1.04);
@@ -648,6 +653,39 @@
   height: 30%;
 }
 
+/* Tiga gambar bertumpuk (Projects) — posisi & rotasi berbeda dari
+   tumpukan dua sertifikat agar ketiganya tetap terlihat. */
+.folder-previews--count-3.folder-previews--gallery .folder-preview--1 {
+  top: 24px;
+  left: 16%;
+  right: 30%;
+  height: 104px;
+  opacity: 0.92;
+  --rot: -5deg;
+  z-index: 1;
+}
+.folder-previews--count-3.folder-previews--gallery .folder-preview--2 {
+  top: 52px;
+  left: 26%;
+  right: 18%;
+  height: 110px;
+  opacity: 1;
+  --rot: 2.5deg;
+  z-index: 2;
+}
+.folder-previews--count-3.folder-previews--gallery .folder-preview--3 {
+  top: 82px;
+  left: 11%;
+  right: 11%;
+  height: 116px;
+  opacity: 1;
+  --rot: -1deg;
+  z-index: 3;
+}
+.folder-previews--count-3 .folder-preview-fade {
+  height: 24%;
+}
+
 /* Fan-out khusus sertifikat: lebih lebar, tidak terlalu tinggi */
 .folder-card.is-open .folder-previews--gallery .folder-preview--1 {
   --ty: -72px;
@@ -670,6 +708,42 @@
     --ty: -46px;
     --tx: 16px;
     --rot: 6deg;
+  }
+}
+
+/* Fan-out tiga gambar (Projects) — diletakkan setelah aturan galeri
+   dua gambar agar tidak tertimpa. */
+.folder-card.is-open .folder-previews--count-3 .folder-preview--1 {
+  --ty: -62px;
+  --tx: -16px;
+  --rot: -8deg;
+}
+.folder-card.is-open .folder-previews--count-3 .folder-preview--2 {
+  --ty: -42px;
+  --tx: 0px;
+  --rot: -2deg;
+}
+.folder-card.is-open .folder-previews--count-3 .folder-preview--3 {
+  --ty: -22px;
+  --tx: 16px;
+  --rot: 5deg;
+}
+
+@media (hover: hover) {
+  .folder-card:hover .folder-previews--count-3 .folder-preview--1 {
+    --ty: -62px;
+    --tx: -16px;
+    --rot: -8deg;
+  }
+  .folder-card:hover .folder-previews--count-3 .folder-preview--2 {
+    --ty: -42px;
+    --tx: 0px;
+    --rot: -2deg;
+  }
+  .folder-card:hover .folder-previews--count-3 .folder-preview--3 {
+    --ty: -22px;
+    --tx: 16px;
+    --rot: 5deg;
   }
 }
 
@@ -1030,6 +1104,18 @@
   }
   .folder-previews--gallery .folder-preview--2 {
     top: 66px;
+  }
+  .folder-previews--count-3.folder-previews--gallery .folder-preview--1 {
+    top: 18px;
+    height: 92px;
+  }
+  .folder-previews--count-3.folder-previews--gallery .folder-preview--2 {
+    top: 44px;
+    height: 98px;
+  }
+  .folder-previews--count-3.folder-previews--gallery .folder-preview--3 {
+    top: 70px;
+    height: 104px;
   }
 }
 

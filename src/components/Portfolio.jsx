@@ -134,17 +134,28 @@ export default function Portfolio() {
                   <div className="portfolio-project-card-content">
                     <div
                       className="portfolio-card-thumbnail"
-                      style={{ background: p.gradient }}
+                      style={p.image ? undefined : { background: p.gradient }}
                     >
+                      {p.image && (
+                        <img
+                          className="portfolio-card-cover"
+                          src={p.image}
+                          alt={`Tampilan ${p.title}`}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
                       <span className="portfolio-card-window" aria-hidden="true">
                         <span />
                         <span />
                         <span />
                       </span>
-                      <span className="portfolio-card-thumb-body" aria-hidden="true">
-                        <Icon size={54} />
-                        <span>{p.category}</span>
-                      </span>
+                      {!p.image && (
+                        <span className="portfolio-card-thumb-body" aria-hidden="true">
+                          <Icon size={54} />
+                          <span>{p.category}</span>
+                        </span>
+                      )}
                     </div>
                     <div className="portfolio-card-body">
                       <h3 className="portfolio-card-title">{p.title}</h3>

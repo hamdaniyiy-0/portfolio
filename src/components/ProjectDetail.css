@@ -161,10 +161,10 @@
   background: radial-gradient(at 30% 20%, #12315e33, #05051600 60%), #0a0f1f;
 }
 .project-detail-preview > img {
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   width: 100%;
-  height: auto;
-  max-height: min(70vh, 720px);
+  height: 100%;
   display: block;
 }
 .project-detail-preview-placeholder {
