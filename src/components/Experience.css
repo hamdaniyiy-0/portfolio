@@ -236,14 +236,12 @@
 .timeline-head h3 {
   color: #8b93a3;
   letter-spacing: -0.012em;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
   min-width: 0;
   margin: 0;
   font-size: 0.98rem;
   font-weight: 700;
   line-height: 1.35;
-  overflow: hidden;
   transition: color 0.3s ease;
 }
 .timeline-item.is-active .timeline-head h3 {
@@ -1064,12 +1062,6 @@
   .timeline-head {
     grid-template-columns: auto minmax(0, 1fr);
     row-gap: 4px;
-  }
-  /* Di ponsel judul panjang (mis. GDGs on Campus) dibuat membungkus
-     agar tidak terpotong elipsis. */
-  .timeline-head h3 {
-    white-space: normal;
-    overflow-wrap: anywhere;
   }
   .timeline-logo,
   .timeline-logo img {

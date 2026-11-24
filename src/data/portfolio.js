@@ -8,6 +8,8 @@ import {
   Mail,
   MapPin,
   Clock,
+  Building2,
+  Network,
 } from 'lucide-react'
 import GithubIcon from '../components/icons/GithubIcon'
 import InstagramIcon from '../components/icons/InstagramIcon'
@@ -199,26 +201,30 @@ export const education = [
    - `company`-> instansi/organisasi (subtitle)
    - `type`   -> pil kecil di bawah subtitle
    - `years`  -> badge tahun di kanan atas kartu
+   - `icon`   -> ikon Lucide khusus item (opsional; fallback ikon gedung)
    - `logo`   -> opsional, file di folder `public/`
    - `logoBadge` -> opsional, latar putih bulat untuk logo persegi */
 export const experience = [
   {
-    title: 'Google Student Ambassador',
-    company: 'Universitas Brawijaya',
-    type: 'Ambassador',
-    years: '2025 – Present',
+    title: 'Praktik Kerja Lapangan (PKL)',
+    company: 'PT. Corinthian Industries Indonesia',
+    type: 'Internship',
+    years: '2025',
+    icon: Building2,
   },
   {
-    title: 'Google Developer Groups (GDGs) on Campus',
-    company: 'Universitas Brawijaya',
-    type: 'Community',
-    years: '2025 – 2026',
-  },
-  {
-    title: 'Staff Technology | UI/UX Designer',
-    company: 'Hology 9.0',
-    type: 'Staff',
+    title: 'Olimpiade Jaringan Mikrotik',
+    company: 'SMK AL-HADIID 1 CILEUNGSI',
+    type: 'Competition',
     years: '2026',
+    icon: Trophy,
+  },
+  {
+    title: 'Pelatihan MTCNA (MikroTik Certified Network Associate)',
+    company: 'MikroTik',
+    type: 'Training',
+    years: '2026',
+    icon: Network,
   },
 ]
 

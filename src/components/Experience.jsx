@@ -73,6 +73,7 @@ function ContourBackdrop() {
 function TimelineLogo({ item, FallbackIcon }) {
   const [failed, setFailed] = useState(false)
   const showImage = Boolean(item.logo) && !failed
+  const Icon = item.icon || FallbackIcon
 
   return (
     <span className="timeline-logo" aria-hidden="true">
@@ -85,7 +86,7 @@ function TimelineLogo({ item, FallbackIcon }) {
           onError={() => setFailed(true)}
         />
       ) : (
-        <FallbackIcon size={16} />
+        <Icon size={16} />
       )}
     </span>
   )
