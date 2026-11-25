@@ -220,7 +220,7 @@ function goToPortfolio() {
 }
 
 /* ============ Satu lembar kertas ============ */
-function FolderPreview({ preview, index, onOpen }) {
+function FolderPreview({ preview, index, isOpen, onOpen, onToggle }) {
   const Icon = preview.icon
 
   return (
@@ -230,8 +230,8 @@ function FolderPreview({ preview, index, onOpen }) {
         preview.image ? ' folder-preview--image' : ''
       }`}
       style={preview.bg ? { backgroundImage: preview.bg } : undefined}
-      onClick={() => onOpen(preview)}
-      aria-label={`Buka ${preview.title}`}
+      onClick={() => (isOpen ? onOpen(preview) : onToggle())}
+      aria-label={isOpen ? `Lihat ${preview.title}` : `Buka folder ${preview.title}`}
     >
       {preview.image ? (
         <>
@@ -274,10 +274,11 @@ function FolderPreview({ preview, index, onOpen }) {
 /* ============ Kartu folder + dropdown + modal ============ */
 function FolderCard({ stat }) {
   const previews = getPreviews(stat)
-  const [expanded, setExpanded] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [active, setActive] = useState(null)
   const menuRef = useRef(null)
+  const cardRef = useRef(null)
 
   const closeMenu = useCallback(() => setMenuOpen(false), [])
 
@@ -298,6 +299,23 @@ function FolderCard({ stat }) {
     }
   }, [menuOpen, closeMenu])
 
+  /* Klik di luar kartu / Escape menutup folder yang sedang terbuka */
+  useEffect(() => {
+    if (!isOpen) return undefined
+    const onPointerDown = (event) => {
+      if (!cardRef.current?.contains(event.target)) setIsOpen(false)
+    }
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setIsOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isOpen])
+
   /* Escape + kunci scroll saat modal terbuka */
   useEffect(() => {
     if (!active) return undefined
@@ -314,20 +332,31 @@ function FolderCard({ stat }) {
   }, [active])
 
   const handleToggleFolder = () => {
-    setExpanded((value) => !value)
+    setIsOpen((value) => !value)
     closeMenu()
   }
 
   const handleExplore = () => {
     closeMenu()
-    setExpanded(false)
+    setIsOpen(false)
     goToPortfolio()
   }
 
   return (
-    <article className={`folder-card${expanded ? ' is-open' : ''}`}>
+    <article className={`folder-card${isOpen ? ' is-open' : ''}`} ref={cardRef}>
       <div className="folder-shell">
         <span className="folder-glass" aria-hidden="true" />
+
+        {/* Tombol transparan penutup kartu: klik di mana saja pada kartu
+            membuka/menutup folder. Preview & menu punya z-index lebih tinggi
+            sehingga tetap bisa diklik sendiri. */}
+        <button
+          type="button"
+          className="folder-toggle"
+          onClick={handleToggleFolder}
+          aria-expanded={isOpen}
+          aria-label={`${isOpen ? 'Tutup' : 'Buka'} folder ${stat.label}`}
+        />
 
         <svg
           className="folder-outline"
@@ -345,7 +374,14 @@ function FolderCard({ stat }) {
           }${previews.length === 3 ? ' folder-previews--count-3' : ''}`}
         >
           {previews.map((preview, index) => (
-            <FolderPreview key={preview.key} preview={preview} index={index} onOpen={setActive} />
+            <FolderPreview
+              key={preview.key}
+              preview={preview}
+              index={index}
+              isOpen={isOpen}
+              onOpen={setActive}
+              onToggle={handleToggleFolder}
+            />
           ))}
           <span className="folder-preview-fade" aria-hidden="true" />
         </div>
@@ -375,7 +411,7 @@ function FolderCard({ stat }) {
                 role="menuitem"
                 onClick={handleToggleFolder}
               >
-                <span>{expanded ? 'Close folder' : 'Open folder'}</span>
+                <span>{isOpen ? 'Close folder' : 'Open folder'}</span>
               </button>
               <button
                 type="button"

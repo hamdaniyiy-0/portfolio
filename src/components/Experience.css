@@ -378,9 +378,27 @@
 
 /* Tumpukan preview konten — TIDAK di-mask agar bisa menyembul keluar folder */
 .folder-previews {
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
   position: absolute;
   inset: 0;
+}
+
+/* Area klik transparan di bawah preview & menu (membuka/menutup folder). */
+.folder-toggle {
+  z-index: 1;
+  background: none;
+  border: 0;
+  border-radius: 20px;
+  padding: 0;
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.folder-toggle:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 3px;
 }
 
 .folder-preview {
@@ -402,6 +420,7 @@
   cursor: pointer;
   display: flex;
   position: absolute;
+  pointer-events: auto;
   overflow: hidden;
   box-shadow: 0 12px 28px #00000057;
   transform: translate3d(var(--tx), calc(var(--ty) + var(--lift)), 0) rotate(var(--rot))
@@ -409,6 +428,11 @@
   transform-origin: center bottom;
   transition:
     transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    right 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
 }
@@ -759,6 +783,7 @@
 
 .folder-meta {
   z-index: 4;
+  pointer-events: none;
   flex-direction: column;
   gap: 2px;
   display: flex;
@@ -1165,6 +1190,76 @@
   }
   .experience-contours {
     opacity: 0.45;
+  }
+}
+
+/* ============ Folder terbuka: gambar berjejer rapi ============
+   Klik kartu -> tumpukan miring diratakan jadi satu baris (tanpa rotasi,
+   tanpa tumpang tindih). Klik lagi atau klik di luar -> kembali menumpuk. */
+.folder-card.is-open .folder-previews .folder-preview {
+  --tx: 0px;
+  --ty: 0px;
+  --rot: 0deg;
+  --lift: 0px;
+  opacity: 1;
+}
+
+/* Dua gambar: Certificates & Awards */
+.folder-card.is-open .folder-previews--gallery .folder-preview {
+  top: 28px;
+  height: 128px;
+}
+.folder-card.is-open .folder-previews--gallery .folder-preview--1 {
+  left: 8%;
+  right: 54%;
+}
+.folder-card.is-open .folder-previews--gallery .folder-preview--2 {
+  left: 54%;
+  right: 8%;
+}
+
+/* Tiga gambar: Projects */
+.folder-card.is-open .folder-previews--count-3 .folder-preview {
+  top: 30px;
+  height: 124px;
+}
+.folder-card.is-open .folder-previews--count-3 .folder-preview--1 {
+  left: 6%;
+  right: 68.4%;
+}
+.folder-card.is-open .folder-previews--count-3 .folder-preview--2 {
+  left: 35.8%;
+  right: 38.6%;
+}
+.folder-card.is-open .folder-previews--count-3 .folder-preview--3 {
+  left: 65.4%;
+  right: 6%;
+}
+
+/* Satu gambar */
+.folder-card.is-open .folder-previews--single .folder-preview--1 {
+  top: 34px;
+  left: 22%;
+  right: 22%;
+  height: 126px;
+}
+
+/* Gradien gelap bawah tidak perlu menutupi deretan gambar */
+.folder-preview-fade {
+  transition: opacity 0.3s ease;
+}
+.folder-card.is-open .folder-preview-fade {
+  opacity: 0;
+}
+
+@media (width <= 780px) {
+  .folder-card.is-open .folder-previews--gallery .folder-preview {
+    top: 26px;
+    height: 120px;
+  }
+  .folder-card.is-open .folder-previews--count-3 .folder-preview {
+    top: 28px;
+    height: 116px;
   }
 }
 

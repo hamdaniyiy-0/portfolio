@@ -10,6 +10,9 @@ import {
   Clock,
   Building2,
   Network,
+  Globe,
+  Code2,
+  Cable,
 } from 'lucide-react'
 import GithubIcon from '../components/icons/GithubIcon'
 import InstagramIcon from '../components/icons/InstagramIcon'
@@ -101,6 +104,45 @@ export const projects = [
     gradient: 'linear-gradient(135deg, #134e4a 0%, #0f766e 48%, #2dd4bf 100%)',
     category: 'HARDWARE',
     icon: Monitor,
+  },
+  {
+    title: 'Web Server and Domain Configuration',
+    description:
+      'Membangun web server dan menghubungkan domain agar website dapat diakses melalui nama domain.',
+    tech: ['Web Server', 'Domain', 'DNS', 'Nginx'],
+    link: '',
+    live: '',
+    preview: '',
+    image: '/images/projects/webserver.png',
+    gradient: 'linear-gradient(135deg, #082f49 0%, #0369a1 48%, #38bdf8 100%)',
+    category: 'WEB SERVER',
+    icon: Globe,
+  },
+  {
+    title: 'Personal Portfolio Website',
+    description:
+      'Membuat website portofolio untuk menampilkan profil, kemampuan teknis, pengalaman, dan proyek.',
+    tech: ['React', 'Vite', 'CSS', 'Frontend'],
+    link: '',
+    live: '',
+    preview: '',
+    image: '/images/projects/portfolio.png',
+    gradient: 'linear-gradient(135deg, #3b0764 0%, #7c3aed 48%, #f472b6 100%)',
+    category: 'FRONTEND',
+    icon: Code2,
+  },
+  {
+    title: 'UTP Cable Installation',
+    description:
+      'Pembuatan kabel Straight dan Cross serta pengujian menggunakan LAN tester.',
+    tech: ['Networking', 'UTP', 'LAN Tester', 'Hardware'],
+    link: '',
+    live: '',
+    preview: '',
+    image: '/images/projects/utp.png',
+    gradient: 'linear-gradient(135deg, #451a03 0%, #b45309 48%, #fbbf24 100%)',
+    category: 'NETWORKING',
+    icon: Cable,
   },
 ]
 
@@ -234,7 +276,7 @@ export const experience = [
 /* ============ STATISTIK ============
    `detail` = kalimat kecil di bawah label (meniru referensi). */
 export const stats = [
-  { label: 'Projects', value: 3, icon: FolderGit2, detail: 'Karya yang dibuat' },
+  { label: 'Projects', value: 6, icon: FolderGit2, detail: 'Karya yang dibuat' },
   { label: 'Certificates', value: 2, icon: ShieldCheck, detail: 'Skill yang divalidasi' },
   { label: 'Awards', value: 2, icon: Trophy, detail: 'Pencapaian diraih' },
 ]
