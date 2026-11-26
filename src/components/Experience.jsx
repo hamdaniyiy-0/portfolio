@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import {
   ArrowUpRight,
   Building2,
@@ -7,9 +6,9 @@ import {
   GraduationCap,
   ShieldCheck,
   Trophy,
-  X,
 } from 'lucide-react'
 import { awards, certificates, education, experience, projects, stats } from '../data/portfolio'
+import FolderModal from './FolderModal'
 import './Experience.css'
 
 /**
@@ -220,18 +219,16 @@ function goToPortfolio() {
 }
 
 /* ============ Satu lembar kertas ============ */
-function FolderPreview({ preview, index, isOpen, onOpen, onToggle }) {
+function FolderPreview({ preview, index }) {
   const Icon = preview.icon
 
   return (
-    <button
-      type="button"
+    <div
       className={`folder-preview folder-preview--${index + 1} folder-preview--${preview.tone}${
         preview.image ? ' folder-preview--image' : ''
       }`}
       style={preview.bg ? { backgroundImage: preview.bg } : undefined}
-      onClick={() => (isOpen ? onOpen(preview) : onToggle())}
-      aria-label={isOpen ? `Lihat ${preview.title}` : `Buka folder ${preview.title}`}
+      aria-hidden="true"
     >
       {preview.image ? (
         <>
@@ -267,18 +264,15 @@ function FolderPreview({ preview, index, isOpen, onOpen, onToggle }) {
           <span className="folder-preview-sub">{preview.sub}</span>
         </>
       )}
-    </button>
+    </div>
   )
 }
 
-/* ============ Kartu folder + dropdown + modal ============ */
-function FolderCard({ stat }) {
+/* ============ Kartu folder + dropdown ============ */
+function FolderCard({ stat, onOpen }) {
   const previews = getPreviews(stat)
-  const [isOpen, setIsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [active, setActive] = useState(null)
   const menuRef = useRef(null)
-  const cardRef = useRef(null)
 
   const closeMenu = useCallback(() => setMenuOpen(false), [])
 
@@ -299,63 +293,30 @@ function FolderCard({ stat }) {
     }
   }, [menuOpen, closeMenu])
 
-  /* Klik di luar kartu / Escape menutup folder yang sedang terbuka */
-  useEffect(() => {
-    if (!isOpen) return undefined
-    const onPointerDown = (event) => {
-      if (!cardRef.current?.contains(event.target)) setIsOpen(false)
-    }
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') setIsOpen(false)
-    }
-    document.addEventListener('pointerdown', onPointerDown)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [isOpen])
-
-  /* Escape + kunci scroll saat modal terbuka */
-  useEffect(() => {
-    if (!active) return undefined
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') setActive(null)
-    }
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.body.style.overflow = prevOverflow
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [active])
-
-  const handleToggleFolder = () => {
-    setIsOpen((value) => !value)
+  /* Buka "File Manager": modal berisi seluruh isi folder. */
+  const handleOpenFolder = () => {
     closeMenu()
+    onOpen()
   }
 
   const handleExplore = () => {
     closeMenu()
-    setIsOpen(false)
     goToPortfolio()
   }
 
   return (
-    <article className={`folder-card${isOpen ? ' is-open' : ''}`} ref={cardRef}>
+    <article className="folder-card">
       <div className="folder-shell">
         <span className="folder-glass" aria-hidden="true" />
 
-        {/* Tombol transparan penutup kartu: klik di mana saja pada kartu
-            membuka/menutup folder. Preview & menu punya z-index lebih tinggi
-            sehingga tetap bisa diklik sendiri. */}
+        {/* Tombol transparan: klik di mana pun pada kartu membuka folder.
+            Preview & menu berada di atasnya sehingga tetap punya area sendiri. */}
         <button
           type="button"
           className="folder-toggle"
-          onClick={handleToggleFolder}
-          aria-expanded={isOpen}
-          aria-label={`${isOpen ? 'Tutup' : 'Buka'} folder ${stat.label}`}
+          onClick={handleOpenFolder}
+          aria-haspopup="dialog"
+          aria-label={`Buka folder ${stat.label}`}
         />
 
         <svg
@@ -374,14 +335,7 @@ function FolderCard({ stat }) {
           }${previews.length === 3 ? ' folder-previews--count-3' : ''}`}
         >
           {previews.map((preview, index) => (
-            <FolderPreview
-              key={preview.key}
-              preview={preview}
-              index={index}
-              isOpen={isOpen}
-              onOpen={setActive}
-              onToggle={handleToggleFolder}
-            />
+            <FolderPreview key={preview.key} preview={preview} index={index} />
           ))}
           <span className="folder-preview-fade" aria-hidden="true" />
         </div>
@@ -409,9 +363,9 @@ function FolderCard({ stat }) {
                 type="button"
                 className="folder-menu__item"
                 role="menuitem"
-                onClick={handleToggleFolder}
+                onClick={handleOpenFolder}
               >
-                <span>{isOpen ? 'Close folder' : 'Open folder'}</span>
+                <span>Open folder</span>
               </button>
               <button
                 type="button"
@@ -426,84 +380,15 @@ function FolderCard({ stat }) {
           )}
         </div>
       </div>
-
-      {active &&
-        createPortal(
-          <div className="folder-modal" onClick={() => setActive(null)}>
-            <div
-              className="folder-modal__panel"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="folder-modal-title"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <button
-                type="button"
-                className="folder-modal__close"
-                onClick={() => setActive(null)}
-                aria-label="Tutup pratinjau"
-              >
-                <X size={18} aria-hidden="true" />
-              </button>
-
-              <div
-                className={`folder-modal__visual folder-modal__visual--${active.tone}${
-                  active.image ? ' folder-modal__visual--image' : ''
-                }`}
-                style={active.bg ? { backgroundImage: active.bg } : undefined}
-              >
-                {active.image ? (
-                  <img
-                    className="folder-modal__image"
-                    src={active.image}
-                    alt={`Sertifikat ${active.title}`}
-                  />
-                ) : (
-                  <>
-                    {active.icon && (
-                      <active.icon className="folder-modal__icon" size={44} aria-hidden="true" />
-                    )}
-                    <span className="folder-modal__tag">{active.category}</span>
-                  </>
-                )}
-              </div>
-
-              <div className="folder-modal__body">
-                <span className="folder-modal__eyebrow">{active.category}</span>
-                <h3 id="folder-modal-title">{active.title}</h3>
-                <p className="folder-modal__meta">{active.meta}</p>
-
-                {active.description && (
-                  <p className="folder-modal__description">{active.description}</p>
-                )}
-
-                {active.tech && (
-                  <div className="folder-modal__chips">
-                    {active.tech.map((tech) => (
-                      <span key={tech}>{tech}</span>
-                    ))}
-                  </div>
-                )}
-
-                <a
-                  className="folder-modal__cta"
-                  href="#Portofolio"
-                  onClick={() => setActive(null)}
-                >
-                  <span>Lihat di Portofolio</span>
-                  <ArrowUpRight size={16} aria-hidden="true" />
-                </a>
-              </div>
-            </div>
-          </div>,
-          document.body,
-        )}
     </article>
   )
 }
 
 /* ============ Section ============ */
 export default function Experience() {
+  /* Folder yang sedang dibuka di FolderModal: 'Projects' | 'Certificates' | 'Awards'. */
+  const [activeFolder, setActiveFolder] = useState(null)
+
   /* Education ditampilkan urut kronologis (SMP → SMK) sesuai data. */
   const educationItems = education.map((item) => ({
     name: item.school,
@@ -529,6 +414,26 @@ export default function Experience() {
 
   const hasExperience = experienceItems.length > 0
 
+  /* Isi tiap folder untuk File Manager (semua item, bukan hanya 3 preview). */
+  const folderItems = {
+    Projects: projects.map((project) => ({
+      title: project.title,
+      image: project.image,
+      meta: project.category,
+    })),
+    Certificates: certificates.map((certificate) => ({
+      title: certificate.title,
+      image: certificate.image,
+      meta: certificate.issuer,
+    })),
+    Awards: awards.map((award) => ({
+      title: award.title,
+      image: award.image,
+      meta: award.issuer,
+    })),
+  }
+  const activeItems = activeFolder ? folderItems[activeFolder] ?? [] : []
+
   return (
     <section className="experience-section" aria-label="Education, experience, and statistics">
       <ContourBackdrop />
@@ -541,9 +446,20 @@ export default function Experience() {
 
         <div className="experience-stats">
           {stats.map((stat) => (
-            <FolderCard key={stat.label} stat={stat} />
+            <FolderCard
+              key={stat.label}
+              stat={stat}
+              onOpen={() => setActiveFolder(stat.label)}
+            />
           ))}
         </div>
+
+        <FolderModal
+          isOpen={Boolean(activeFolder)}
+          onClose={() => setActiveFolder(null)}
+          data={activeItems}
+          title={activeFolder ? `All ${activeFolder} (${activeItems.length})` : ''}
+        />
       </div>
     </section>
   )

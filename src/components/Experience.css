@@ -323,8 +323,7 @@
   position: relative;
 }
 .folder-card:hover,
-.folder-card:focus-within,
-.folder-card.is-open {
+.folder-card:focus-within {
   z-index: 10;
 }
 
@@ -420,7 +419,7 @@
   cursor: pointer;
   display: flex;
   position: absolute;
-  pointer-events: auto;
+  pointer-events: none;
   overflow: hidden;
   box-shadow: 0 12px 28px #00000057;
   transform: translate3d(var(--tx), calc(var(--ty) + var(--lift)), 0) rotate(var(--rot))
@@ -492,33 +491,7 @@
   --rot: -1.2deg;
 }
 
-/* Mekar / fan-out saat folder di-hover atau dibuka lewat menu */
-.folder-card.is-open .folder-preview--1,
-.folder-card.is-open .folder-preview--2,
-.folder-card.is-open .folder-preview--3 {
-  box-shadow: 0 22px 46px #0000008f;
-}
-.folder-card.is-open .folder-preview--1 {
-  --ty: -96px;
-  --tx: -14px;
-  --rot: -6deg;
-}
-.folder-card.is-open .folder-preview--2 {
-  --ty: -70px;
-  --tx: 0px;
-  --rot: -1deg;
-}
-.folder-card.is-open .folder-preview--3 {
-  --ty: -44px;
-  --tx: 12px;
-  --rot: 4deg;
-}
-.folder-card.is-open .folder-previews--single .folder-preview--1 {
-  --ty: -78px;
-  --tx: 0px;
-  --rot: -3deg;
-}
-
+/* Fan-out saat folder di-hover (desain tumpukan tetap dipertahankan) */
 @media (hover: hover) {
   .folder-card:hover .folder-preview--1 {
     --ty: -96px;
@@ -711,17 +684,6 @@
 }
 
 /* Fan-out khusus sertifikat: lebih lebar, tidak terlalu tinggi */
-.folder-card.is-open .folder-previews--gallery .folder-preview--1 {
-  --ty: -72px;
-  --tx: -18px;
-  --rot: -8deg;
-}
-.folder-card.is-open .folder-previews--gallery .folder-preview--2 {
-  --ty: -46px;
-  --tx: 16px;
-  --rot: 6deg;
-}
-
 @media (hover: hover) {
   .folder-card:hover .folder-previews--gallery .folder-preview--1 {
     --ty: -72px;
@@ -737,22 +699,6 @@
 
 /* Fan-out tiga gambar (Projects) — diletakkan setelah aturan galeri
    dua gambar agar tidak tertimpa. */
-.folder-card.is-open .folder-previews--count-3 .folder-preview--1 {
-  --ty: -62px;
-  --tx: -16px;
-  --rot: -8deg;
-}
-.folder-card.is-open .folder-previews--count-3 .folder-preview--2 {
-  --ty: -42px;
-  --tx: 0px;
-  --rot: -2deg;
-}
-.folder-card.is-open .folder-previews--count-3 .folder-preview--3 {
-  --ty: -22px;
-  --tx: 16px;
-  --rot: 5deg;
-}
-
 @media (hover: hover) {
   .folder-card:hover .folder-previews--count-3 .folder-preview--1 {
     --ty: -62px;
@@ -878,205 +824,10 @@
 }
 
 /* ============ Modal pratinjau ============ */
-.folder-modal {
-  z-index: 2000;
-  background: #030509bd;
-  place-items: center;
-  padding: clamp(16px, 4vw, 40px);
-  display: grid;
-  position: fixed;
-  inset: 0;
-  animation: folder-modal-fade 0.2s ease-out;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-.folder-modal__panel {
-  background: linear-gradient(160deg, #131a24f5, #0a0f18fa);
-  border: 1px solid #ffffff24;
-  border-radius: 22px;
-  width: min(560px, 100%);
-  max-height: min(86vh, 720px);
-  overflow: auto;
-  position: relative;
-  box-shadow: 0 32px 90px #0000009e;
-  animation: folder-modal-in 0.26s cubic-bezier(0.16, 1, 0.3, 1);
-  scrollbar-width: thin;
-}
-
-.folder-modal__close {
-  color: #fff;
-  cursor: pointer;
-  z-index: 2;
-  background: #0a0e14a6;
-  border: 1px solid #ffffff2e;
-  border-radius: 50%;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  transition: background 0.2s ease;
-  display: grid;
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-.folder-modal__close:hover {
-  background: #ffffff2b;
-}
-
-.folder-modal__visual {
-  height: 190px;
-  color: #eaf3ff;
-  background-position: center;
-  background-size: cover;
-  border-radius: 22px 22px 0 0;
-  place-items: center;
-  display: grid;
-  position: relative;
-  overflow: hidden;
-}
-.folder-modal__visual::after {
-  content: '';
-  background: linear-gradient(180deg, #0000 35%, #0a0f18e6);
-  position: absolute;
-  inset: 0;
-}
-.folder-modal__visual--light {
-  color: #182230;
-  background: linear-gradient(150deg, #f6f8fc, #d7e0ec);
-}
-.folder-modal__visual--light::after {
-  background: linear-gradient(180deg, #0000 40%, #e2e8f1b8);
-}
-.folder-modal__visual--image {
-  height: min(42vh, 340px);
-  padding: clamp(10px, 2vw, 18px);
-  background: #080d15;
-  place-items: center;
-}
-.folder-modal__visual--image::after {
-  display: none;
-}
-.folder-modal__image {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: calc(min(42vh, 340px) - 36px);
-  margin: 0 auto;
-  object-fit: contain;
-  border-radius: 8px;
-  background: #f8fafc;
-  box-shadow: 0 14px 38px #00000080;
-}
-.folder-modal__icon {
-  z-index: 1;
-  position: relative;
-}
-.folder-modal__tag {
-  z-index: 1;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  opacity: 0.78;
-  font-size: 0.66rem;
-  font-weight: 700;
-  position: absolute;
-  bottom: 16px;
-  left: 20px;
-}
-
-.folder-modal__body {
-  padding: 22px 24px 24px;
-}
-.folder-modal__eyebrow {
-  color: #7fb6ff;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-size: 0.66rem;
-  font-weight: 700;
-}
-.folder-modal__body h3 {
-  color: #f5f9ff;
-  letter-spacing: -0.025em;
-  margin: 8px 0 6px;
-  font-size: clamp(1.25rem, 3vw, 1.55rem);
-  font-weight: 750;
-  line-height: 1.25;
-}
-.folder-modal__meta {
-  color: #93a0b4;
-  margin: 0 0 14px;
-  font-size: 0.84rem;
-}
-.folder-modal__description {
-  color: #b9c4d4;
-  margin: 0 0 16px;
-  font-size: 0.92rem;
-  line-height: 1.7;
-}
-.folder-modal__chips {
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 0 0 20px;
-  display: flex;
-}
-.folder-modal__chips span {
-  color: #bcd9ff;
-  background: #3b82f61f;
-  border: 1px solid #3b82f63d;
-  border-radius: 999px;
-  padding: 4px 9px;
-  font-size: 0.72rem;
-  font-weight: 600;
-}
-.folder-modal__cta {
-  color: #eaf4ff;
-  background: #2c67ed38;
-  border: 1px solid #4b83ff6b;
-  border-radius: 12px;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  font-weight: 650;
-  text-decoration: none;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-  display: inline-flex;
-}
-.folder-modal__cta:hover {
-  background: #2c67ed61;
-  border-color: #4b83ffa6;
-  transform: translateY(-1px);
-}
-
 @keyframes folder-menu-in {
   from {
     opacity: 0;
     transform: translateY(4px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes folder-modal-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes folder-modal-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.97);
   }
   to {
     opacity: 1;
@@ -1194,74 +945,7 @@
 }
 
 /* ============ Folder terbuka: gambar berjejer rapi ============
-   Klik kartu -> tumpukan miring diratakan jadi satu baris (tanpa rotasi,
-   tanpa tumpang tindih). Klik lagi atau klik di luar -> kembali menumpuk. */
-.folder-card.is-open .folder-previews .folder-preview {
-  --tx: 0px;
-  --ty: 0px;
-  --rot: 0deg;
-  --lift: 0px;
-  opacity: 1;
-}
-
-/* Dua gambar: Certificates & Awards */
-.folder-card.is-open .folder-previews--gallery .folder-preview {
-  top: 28px;
-  height: 128px;
-}
-.folder-card.is-open .folder-previews--gallery .folder-preview--1 {
-  left: 8%;
-  right: 54%;
-}
-.folder-card.is-open .folder-previews--gallery .folder-preview--2 {
-  left: 54%;
-  right: 8%;
-}
-
-/* Tiga gambar: Projects */
-.folder-card.is-open .folder-previews--count-3 .folder-preview {
-  top: 30px;
-  height: 124px;
-}
-.folder-card.is-open .folder-previews--count-3 .folder-preview--1 {
-  left: 6%;
-  right: 68.4%;
-}
-.folder-card.is-open .folder-previews--count-3 .folder-preview--2 {
-  left: 35.8%;
-  right: 38.6%;
-}
-.folder-card.is-open .folder-previews--count-3 .folder-preview--3 {
-  left: 65.4%;
-  right: 6%;
-}
-
-/* Satu gambar */
-.folder-card.is-open .folder-previews--single .folder-preview--1 {
-  top: 34px;
-  left: 22%;
-  right: 22%;
-  height: 126px;
-}
-
-/* Gradien gelap bawah tidak perlu menutupi deretan gambar */
-.folder-preview-fade {
-  transition: opacity 0.3s ease;
-}
-.folder-card.is-open .folder-preview-fade {
-  opacity: 0;
-}
-
-@media (width <= 780px) {
-  .folder-card.is-open .folder-previews--gallery .folder-preview {
-    top: 26px;
-    height: 120px;
-  }
-  .folder-card.is-open .folder-previews--count-3 .folder-preview {
-    top: 28px;
-    height: 116px;
-  }
-}
+   (dihapus — kartu kini membuka FolderModal, tumpukan tetap utuh) */
 
 @media (prefers-reduced-motion: reduce) {
   .folder-shell,
@@ -1286,16 +970,13 @@
   .folder-card:hover .folder-shell {
     transform: none;
   }
-  .folder-card:hover .folder-preview,
-  .folder-card.is-open .folder-preview {
+  .folder-card:hover .folder-preview {
     --ty: 0px;
     --tx: 0px;
     --lift: 0px;
     --scale: 1;
   }
-  .folder-menu,
-  .folder-modal,
-  .folder-modal__panel {
+  .folder-menu {
     animation: none;
   }
 }

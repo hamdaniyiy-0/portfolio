@@ -1,285 +1,226 @@
-/* Navbar — floating glassmorphism transparan
-   Wrapper luar benar-benar tanpa background/border/shadow; hanya kapsul
-   dalam yang memakai efek kaca buram. */
-
-/* ============ 1. Wrapper luar (transparan total) ============ */
+/* ============ WADAH UTAMA ============ */
+/* Hanya posisi & tata letak. Tanpa background, border, atau shadow. */
 .navbar-root {
-  z-index: 50;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  justify-content: center;
-  padding: 20px 20px 0;
-  transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-}
-.navbar-scrolled {
-  padding: 20px 20px 0;
-}
-
-/* ============ 2. Kapsul kaca melayang ============ */
-.navbar-container {
-  --navbar-width: fit-content;
-  background: rgba(255, 255, 255, 0.05);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 9999px;
-  width: var(--navbar-width);
-  max-width: 100%;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
-}
-.navbar-scrolled .navbar-container {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 38px rgba(0, 0, 0, 0.34);
-}
-
-.navbar-container .glass-surface__content {
-  gap: 6px;
+  z-index: 50;
+  display: flex;
   justify-content: center;
-  align-items: center;
-  width: auto;
-  height: auto;
-  padding: 6px 12px;
+  padding-top: 20px;
+}
+
+.navbar-desktop-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ============ ISI KONTEN DI DALAM KACA ============ */
+.navbar-inner {
   position: relative;
-  z-index: 1;
   display: flex;
-}
-
-/* ============ 3. Item menu ============ */
-.navbar-links {
   align-items: center;
-  gap: 2px;
-  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 16px;
+  gap: 16px;
 }
 
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Teks tetap kontras di atas kaca yang sangat bening */
 .navbar-link-item {
-  z-index: 0;
-  color: #a1a1aa; /* abu-abu terang (non-aktif) */
-  border-radius: 9999px;
+  color: #e4e4e7;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: -0.005em;
-  line-height: 1.25;
+  border-radius: 99px;
   text-decoration: none;
-  transition: color 0.25s ease, background 0.25s ease;
-  position: relative;
-}
-.navbar-link-item:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-}
-.navbar-link-item.is-active {
-  color: #fff;
+  transition: color 0.2s ease;
+  background: transparent;
+  border: none;
   box-shadow: none;
-  background: 0 0;
-}
-.navbar-active-pill {
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.15); /* highlight bulat halus */
-  border: 0;
-  display: block;
-  position: absolute;
-  inset: 0;
-  box-shadow: none;
-}
-.navbar-link-item > span:first-child {
-  z-index: 1;
-  position: relative;
+  cursor: pointer;
 }
 
+.navbar-link-item:hover {
+  color: #ffffff;
+}
+
+.navbar-link-item.is-active {
+  color: #ffffff;
+}
+
+/* ============ TOMBOL SUARA ============ */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-icon-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.navbar-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ============ SEMBUNYIKAN MOBILE TOGGLE DI DESKTOP ============ */
+.navbar-mobile-toggle,
 .navbar-mobile-brand {
   display: none;
 }
 
-/* ============ 4. Aksi (audio) di dalam kapsul ============ */
-.navbar-actions {
-  align-items: center;
-  gap: 10px;
+/* ============ MENU MOBILE ============ */
+.navbar-mobile-menu {
+  position: fixed;
+  top: 94px;
+  left: 0;
+  right: 0;
   display: flex;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
 
-.navbar-icon-btn {
+.navbar-mobile-menu.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.navbar-mobile-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 16px;
+  gap: 8px;
+}
+
+.navbar-mobile-link {
   color: #e4e4e7;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  justify-content: center;
-  align-items: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease,
-    transform 0.25s ease;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 12px;
   display: flex;
-}
-.navbar-icon-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.22);
-  transform: translateY(-1px);
-}
-.navbar-sound-on {
-  color: #60a5fa;
-}
-
-.navbar-mobile-toggle {
-  color: #fff;
-  cursor: pointer;
-  background: 0 0;
-  border: none;
-  border-radius: 50%;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 3px;
-  transition: background 0.25s ease;
-  display: none;
-}
-.navbar-mobile-toggle:hover {
-  background: rgba(255, 255, 255, 0.15);
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
-/* ============ 5. Mobile ============ */
-@media (width <= 767px) {
-  .navbar-root,
-  .navbar-scrolled {
-    padding: 20px 12px 0;
+.navbar-mobile-link:hover,
+.navbar-mobile-link.is-active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-mobile-indicator {
+  width: 6px;
+  height: 6px;
+  background: #00f0ff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00f0ff;
+}
+
+.navbar-mobile-footer {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-mobile-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #2c67ed;
+  color: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ============ RESPONSIVE MOBILE ============ */
+@media (max-width: 767px) {
+  .navbar-root {
+    padding: 20px 16px 0;
   }
-  .navbar-container {
-    --navbar-width: 100%;
+
+  /* Tetap tampilkan kapsul (berisi brand + sound + hamburger),
+     hanya link desktop yang disembunyikan. */
+  .navbar-desktop-wrapper {
+    display: flex;
   }
-  .navbar-container .glass-surface__content {
+
+  .navbar-desktop-wrapper .glass-surface {
+    width: calc(100vw - 32px) !important;
+  }
+
+  .navbar-inner {
     justify-content: flex-end;
-    width: 100%;
-    padding: 6px 8px;
+    padding: 0 10px;
+    gap: 8px;
   }
+
+  .navbar-links {
+    display: none;
+  }
+
   .navbar-mobile-brand {
-    color: #fff;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-    pointer-events: none;
-    font-size: 0.95rem;
-    font-weight: 750;
-    line-height: 1;
     display: block;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
   }
-  .navbar-links {
-    display: none;
-  }
-  .navbar-actions {
-    padding-left: 0;
-  }
+
   .navbar-mobile-toggle {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 50%;
   }
-}
 
-/* ============ 6. Dropdown mobile ============ */
-.navbar-mobile-menu {
-  visibility: hidden;
-  border-radius: 20px;
-  max-height: 0;
-  transition:
-    max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0s linear 0.35s;
-  display: block;
-  position: fixed;
-  top: 74px;
-  left: 16px;
-  right: 16px;
-  overflow: hidden;
-}
-.navbar-mobile-glass {
-  width: 100%;
-  height: auto;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #b0cdff42, #23334e33 48%, #91b1e129);
-  -webkit-backdrop-filter: blur(6px) saturate(1.35) brightness(1.06);
-  backdrop-filter: blur(6px) saturate(1.35) brightness(1.06);
-  border: 1px solid #dcebff6b;
-  box-shadow: 0 8px 24px #0000003d;
-}
-@media (width >= 768px) {
-  .navbar-mobile-menu {
-    display: none;
+  .navbar-mobile-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
   }
-}
-.navbar-mobile-menu.is-open {
-  visibility: visible;
-  max-height: 380px;
-  transition:
-    max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility;
-}
-.navbar-mobile-glass .glass-surface__content {
-  justify-content: flex-start;
-  align-items: stretch;
-  width: 100%;
-  height: auto;
-  padding: 0;
-}
-.navbar-mobile-inner {
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-  padding: 1.25rem;
-  display: flex;
-}
-.navbar-mobile-link {
-  color: #cbd5e1;
-  border-radius: 12px;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s;
-  display: flex;
-}
-.navbar-mobile-link:hover,
-.navbar-mobile-link.is-active {
-  color: #fff;
-  background: #ffffff29;
-}
-.navbar-mobile-indicator {
-  background: #00f0ff;
-  border-radius: 50%;
-  width: 6px;
-  height: 6px;
-  box-shadow: 0 0 8px #00f0ff;
-}
-.navbar-mobile-footer {
-  border-top: 1px solid #ffffff14;
-  margin-top: 10px;
-  padding-top: 10px;
-}
-.navbar-mobile-cta {
-  color: #fff;
-  background: #2c67ed;
-  border-radius: 12px;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-  display: flex;
 }
