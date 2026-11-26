@@ -1,13 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  ArrowUpRight,
-  Building2,
-  Ellipsis,
-  GraduationCap,
-  ShieldCheck,
-  Trophy,
-} from 'lucide-react'
-import { awards, certificates, education, experience, projects, stats } from '../data/portfolio'
+import { useEffect, useRef, useState } from 'react'
+import { Building2, GraduationCap } from 'lucide-react'
+import { awards, certificates, education, experience, projects } from '../data/portfolio'
+import Folder from './react-bits/Folder'
 import FolderModal from './FolderModal'
 import './Experience.css'
 
@@ -151,245 +145,43 @@ function Timeline({ title, items }) {
   )
 }
 
-/* ============ Data folder ============ */
-const FOLDER_PATH =
-  'M24 34L232 34L256 8Q259 3 267 3L372 3Q400 3 400 31L400 216Q400 250 366 250L34 250Q0 250 0 216L0 68Q0 34 24 34Z'
-const FOLDER_MASK =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M24 34L232 34L256 8Q259 3 267 3L372 3Q400 3 400 31L400 216Q400 250 366 250L34 250Q0 250 0 216L0 68Q0 34 24 34Z'/%3E%3C/svg%3E\")"
-
-/** Preview + detail modal — memakai konten asli, tanpa data karangan. */
-function getPreviews(stat) {
-  if (stat.label === 'Projects') {
-    return projects.slice(0, 3).map((project) => ({
-      key: project.title,
-      title: project.title,
-      sub: project.category,
-      meta: project.tech.join(' · '),
-      description: project.description,
-      tech: project.tech,
-      icon: project.icon,
-      bg: project.gradient,
-      image: project.image,
-      imageFit: 'cover',
-      tone: 'dark',
-      category: 'Projects',
-    }))
-  }
-  if (stat.label === 'Certificates') {
-    return certificates.slice(0, 3).map((certificate) => ({
-      key: certificate.title,
-      title: certificate.title,
-      sub: `${certificate.issuer} · ${certificate.date}`,
-      meta: `${certificate.issuer} · ${certificate.date}`,
-      description: certificate.description,
-      image: certificate.image,
-      icon: ShieldCheck,
-      tone: 'light',
-      category: 'Certificates',
-    }))
-  }
-  if (stat.label === 'Awards') {
-    return awards.slice(0, 3).map((award) => ({
-      key: award.title,
-      title: award.title,
-      sub: award.issuer,
-      meta: award.issuer,
-      description: award.description,
-      image: award.image,
-      icon: Trophy,
-      tone: 'light',
-      category: 'Awards',
-    }))
-  }
-  return [
-    {
-      key: stat.label,
-      title: stat.label,
-      sub: stat.detail,
-      meta: stat.detail,
-      icon: stat.icon || Trophy,
-      tone: 'dark',
-      category: 'Awards',
-    },
-  ]
+/* ============ Folder interaktif (React Bits) ============ */
+/* Warna aksen tiap folder. */
+const FOLDER_COLORS = {
+  Projects: '#2c67ed',
+  Certificates: '#7aa7ff',
+  Awards: '#00f0ff',
 }
 
-function goToPortfolio() {
-  document.getElementById('Portofolio')?.scrollIntoView({ behavior: 'smooth' })
-}
+/* Ukuran `Folder` (basis 224px) mengikuti lebar kolom grid agar
+   proporsional dari layar kecil sampai lebar. */
+function useFolderSize(ref) {
+  const [size, setSize] = useState(1)
 
-/* ============ Satu lembar kertas ============ */
-function FolderPreview({ preview, index }) {
-  const Icon = preview.icon
-
-  return (
-    <div
-      className={`folder-preview folder-preview--${index + 1} folder-preview--${preview.tone}${
-        preview.image ? ' folder-preview--image' : ''
-      }`}
-      style={preview.bg ? { backgroundImage: preview.bg } : undefined}
-      aria-hidden="true"
-    >
-      {preview.image ? (
-        <>
-          <img
-            className={`folder-preview-image${
-              preview.imageFit === 'cover' ? ' folder-preview-image--cover' : ''
-            }`}
-            src={preview.image}
-            alt={preview.title}
-            loading="lazy"
-            decoding="async"
-          />
-          {preview.category === 'Awards' && Icon && (
-            <span className="folder-preview-award" aria-hidden="true">
-              <Icon size={12} />
-            </span>
-          )}
-        </>
-      ) : preview.tone === 'light' ? (
-        <>
-          <span className="folder-preview-issuer">{preview.sub}</span>
-          <span className="folder-preview-title">{preview.title}</span>
-        </>
-      ) : (
-        <>
-          <span className="folder-preview-dots" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          {Icon && <Icon className="folder-preview-icon" size={14} aria-hidden="true" />}
-          <span className="folder-preview-title">{preview.title}</span>
-          <span className="folder-preview-sub">{preview.sub}</span>
-        </>
-      )}
-    </div>
-  )
-}
-
-/* ============ Kartu folder + dropdown ============ */
-function FolderCard({ stat, onOpen }) {
-  const previews = getPreviews(stat)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef(null)
-
-  const closeMenu = useCallback(() => setMenuOpen(false), [])
-
-  /* Click-outside + Escape untuk dropdown */
   useEffect(() => {
-    if (!menuOpen) return undefined
-    const onPointerDown = (event) => {
-      if (!menuRef.current?.contains(event.target)) closeMenu()
+    const node = ref.current
+    if (!node) return undefined
+
+    const update = () => {
+      const width = node.getBoundingClientRect().width
+      if (!width) return
+      setSize(Math.max(0.82, Math.min(1.5, (width - 8) / 224)))
     }
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') closeMenu()
-    }
-    document.addEventListener('pointerdown', onPointerDown)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [menuOpen, closeMenu])
 
-  /* Buka "File Manager": modal berisi seluruh isi folder. */
-  const handleOpenFolder = () => {
-    closeMenu()
-    onOpen()
-  }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [ref])
 
-  const handleExplore = () => {
-    closeMenu()
-    goToPortfolio()
-  }
-
-  return (
-    <article className="folder-card">
-      <div className="folder-shell">
-        <span className="folder-glass" aria-hidden="true" />
-
-        {/* Tombol transparan: klik di mana pun pada kartu membuka folder.
-            Preview & menu berada di atasnya sehingga tetap punya area sendiri. */}
-        <button
-          type="button"
-          className="folder-toggle"
-          onClick={handleOpenFolder}
-          aria-haspopup="dialog"
-          aria-label={`Buka folder ${stat.label}`}
-        />
-
-        <svg
-          className="folder-outline"
-          viewBox="0 0 400 250"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path d={FOLDER_PATH} vectorEffect="non-scaling-stroke" />
-        </svg>
-
-        <div
-          className={`folder-previews${previews.length === 1 ? ' folder-previews--single' : ''}${
-            previews.some((preview) => preview.image) ? ' folder-previews--gallery' : ''
-          }${previews.length === 3 ? ' folder-previews--count-3' : ''}`}
-        >
-          {previews.map((preview, index) => (
-            <FolderPreview key={preview.key} preview={preview} index={index} />
-          ))}
-          <span className="folder-preview-fade" aria-hidden="true" />
-        </div>
-
-        <div className="folder-meta">
-          <strong>{stat.value}</strong>
-          <span>{stat.label}</span>
-        </div>
-
-        <div className="folder-menu-wrap" ref={menuRef}>
-          <button
-            type="button"
-            className={`folder-more${menuOpen ? ' is-active' : ''}`}
-            onClick={() => setMenuOpen((value) => !value)}
-            aria-label={`Menu ${stat.label}`}
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-          >
-            <Ellipsis size={18} aria-hidden="true" />
-          </button>
-
-          {menuOpen && (
-            <div className="folder-menu" role="menu" aria-label={`Menu ${stat.label}`}>
-              <button
-                type="button"
-                className="folder-menu__item"
-                role="menuitem"
-                onClick={handleOpenFolder}
-              >
-                <span>Open folder</span>
-              </button>
-              <button
-                type="button"
-                className="folder-menu__item"
-                role="menuitem"
-                onClick={handleExplore}
-              >
-                <span>Explore All {stat.label}</span>
-                <ArrowUpRight size={14} aria-hidden="true" />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </article>
-  )
+  return size
 }
-
 /* ============ Section ============ */
 export default function Experience() {
   /* Folder yang sedang dibuka di FolderModal: 'Projects' | 'Certificates' | 'Awards'. */
   const [activeFolder, setActiveFolder] = useState(null)
 
-  /* Education ditampilkan urut kronologis (SMP → SMK) sesuai data. */
+  /* Education ditampilkan urut kronologis (SMP ke SMK) sesuai data. */
   const educationItems = education.map((item) => ({
     name: item.school,
     role: item.major || item.level,
@@ -414,7 +206,37 @@ export default function Experience() {
 
   const hasExperience = experienceItems.length > 0
 
-  /* Isi tiap folder untuk File Manager (semua item, bukan hanya 3 preview). */
+  /* Ukuran folder mengikuti lebar kartu pertama di grid. */
+  const firstFolderRef = useRef(null)
+  const folderSize = useFolderSize(firstFolderRef)
+
+  /* Data asli hanya dipetakan ke properti yang dibutuhkan Folder
+     (`title` + `image`); tidak ada isi yang diubah atau dihapus. */
+  const folders = [
+    {
+      label: 'Projects',
+      items: projects.map((project) => ({
+        title: project.title,
+        image: project.image,
+      })),
+    },
+    {
+      label: 'Certificates',
+      items: certificates.map((certificate) => ({
+        title: certificate.title,
+        image: certificate.image,
+      })),
+    },
+    {
+      label: 'Awards',
+      items: awards.map((award) => ({
+        title: award.title,
+        image: award.image,
+      })),
+    },
+  ]
+
+  /* Isi File Manager memakai seluruh item (termasuk meta tambahan). */
   const folderItems = {
     Projects: projects.map((project) => ({
       title: project.title,
@@ -445,12 +267,26 @@ export default function Experience() {
         </div>
 
         <div className="experience-stats">
-          {stats.map((stat) => (
-            <FolderCard
-              key={stat.label}
-              stat={stat}
-              onOpen={() => setActiveFolder(stat.label)}
-            />
+          {folders.map((folder, index) => (
+            <div
+              className="card-folder-wrapper"
+              key={folder.label}
+              ref={index === 0 ? firstFolderRef : undefined}
+            >
+              <Folder
+                label={folder.label}
+                items={folder.items}
+                variant="glass"
+                theme="dark"
+                layout="stack"
+                color={FOLDER_COLORS[folder.label]}
+                size={folderSize}
+                onItemClick={(item) => {
+                  console.log(`${folder.label} clicked:`, item)
+                  setActiveFolder(folder.label)
+                }}
+              />
+            </div>
           ))}
         </div>
 
