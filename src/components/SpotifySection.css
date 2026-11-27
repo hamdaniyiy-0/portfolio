@@ -68,25 +68,19 @@
   line-height: 1.75;
 }
 
+/* Visual (latar/border/glow) ditangani StarBorder. */
 .spotify-open-link {
   color: #c7dcff;
-  background: #2353b11f;
-  border: 1px solid #4b83ff4d;
-  border-radius: 12px;
-  align-items: center;
   gap: 9px;
   min-height: 46px;
   margin-top: 28px;
   padding: 0 16px;
   font-size: 0.9rem;
   font-weight: 650;
-  text-decoration: none;
-  transition: background 0.2s, border-color 0.2s, transform 0.2s;
-  display: inline-flex;
+  transition: transform 0.2s;
 }
 .spotify-open-link:hover {
-  background: #2353b13d;
-  border-color: #4b83ffa6;
+  color: #ffffff;
   transform: translateY(-2px);
 }
 

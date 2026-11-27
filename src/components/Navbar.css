@@ -151,16 +151,11 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Visual (latar/border/radius) ditangani StarBorder. */
 .navbar-mobile-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: #2c67ed;
-  color: #fff;
-  padding: 12px;
-  border-radius: 12px;
-  text-decoration: none;
+  color: #fafafa;
+  width: 100%;
+  min-height: 44px;
   font-weight: 600;
   font-size: 14px;
 }

@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { ArrowRight, Send } from 'lucide-react'
 import { profile, socials } from '../data/portfolio'
 import useTypewriter from '../hooks/useTypewriter'
+import StarBorder from './StarBorder'
 import './Hero.css'
 
 // Komponen 3D dimuat terpisah agar beban awal ringan
@@ -50,15 +51,51 @@ export default function Hero({ ready = true }) {
 
           <p className="hero-description-copy">{profile.bio}</p>
 
-          <div className="hero-action-row">
-            <a href="#Portofolio" className="hero-btn-primary">
+          <div className="hero-action-row hero-actions-wrapper">
+            <StarBorder
+              as="a"
+              href="#Portofolio"
+              className="hero-star-btn hero-btn-content"
+              color="#2c67ed"
+              trailColor="#ffffff"
+              duration={4}
+              direction="clockwise"
+              stars={1}
+              trailLength={0.25}
+              thickness={1}
+              radius={99}
+              glow={0.8}
+              hover="lap"
+              sparkle={false}
+              clickPulse
+              theme="dark"
+              backgroundColor="transparent"
+            >
               <span>Lihat Projek</span>
               <ArrowRight size={16} aria-hidden="true" />
-            </a>
-            <a href="#Contact" className="hero-btn-secondary">
+            </StarBorder>
+            <StarBorder
+              as="a"
+              href="#Contact"
+              className="hero-star-btn hero-star-btn--contact hero-btn-content"
+              color="#52525b"
+              trailColor="#ffffff"
+              duration={5}
+              direction="counterclockwise"
+              stars={1}
+              trailLength={0.2}
+              thickness={1}
+              radius={99}
+              glow={0.5}
+              hover="lap"
+              sparkle={false}
+              clickPulse
+              theme="dark"
+              backgroundColor="transparent"
+            >
               <span>Hubungi Saya</span>
               <Send size={15} aria-hidden="true" />
-            </a>
+            </StarBorder>
           </div>
 
           <div className="hero-find-me-wrap">

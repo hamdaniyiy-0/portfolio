@@ -112,46 +112,32 @@
   margin-bottom: 2.25rem;
   display: flex;
 }
-.hero-btn-primary {
-  color: #fff;
-  background: #2c67ed;
-  border-radius: 14px;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 26px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  box-shadow: 0 0 25px #2c67ed59;
-}
-.hero-btn-primary:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 35px #2c67ed8c;
-}
-.hero-btn-secondary {
-  color: #dbeafe;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  background: #ffffff08;
-  border: 1px solid #ffffff1f;
-  border-radius: 14px;
-  align-items: center;
-  gap: 8px;
+/* ============ Tombol StarBorder ============ */
+/* Latar, border, dan bayangan lama dihapus; efek visual sepenuhnya
+   ditangani oleh kanvas StarBorder. */
+.hero-actions-wrapper .star-border {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #fafafa;
+  min-height: 46px;
   padding: 13px 24px;
   font-size: 0.92rem;
   font-weight: 600;
-  text-decoration: none;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
 }
-.hero-btn-secondary:hover {
-  color: #fff;
-  background: #2c67ed1f;
-  border-color: #3b82f680;
-  transform: translateY(-2px) scale(1.02);
+
+.hero-star-btn svg {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-star-btn:hover svg,
+.hero-star-btn:focus-visible svg {
+  transform: translateX(3px);
+}
+
+.hero-star-btn--contact:hover svg,
+.hero-star-btn--contact:focus-visible svg {
+  transform: translate(2px, -2px);
 }
 
 .hero-find-me-wrap {
@@ -265,9 +251,8 @@
     justify-content: center;
     width: 100%;
   }
-  .hero-btn-primary,
-  .hero-btn-secondary {
-    flex: 1;
+  .hero-actions-wrapper .star-border {
+    flex: 1 1 0;
     justify-content: center;
     min-width: 0;
     padding-left: 12px;

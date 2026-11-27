@@ -3,6 +3,7 @@ import { ArrowUpRight, Check, ImagePlus, MessageSquare, Send, User, Mail, FileTe
 import { socials } from '../data/portfolio'
 import { createComment, fetchComments, MAX_PHOTO_BYTES } from '../lib/comments'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
+import StarBorder from './StarBorder'
 import './Contact.css'
 
 const SUBS = {
@@ -262,15 +263,24 @@ export default function Contact() {
                 </div>
               </div>
 
-              <button
+              <StarBorder
                 type="submit"
-                className="contact-submit-btn"
+                className="contact-submit-btn hero-btn-content"
                 disabled={sendingMessage}
                 aria-busy={sendingMessage}
+                color="#2c67ed"
+                trailColor="#ffffff"
+                duration={4}
+                direction="clockwise"
+                radius={12}
+                glow={0.8}
+                hover="lap"
+                theme="dark"
+                backgroundColor="transparent"
               >
                 <Send size={16} aria-hidden="true" />
                 <span>{sendingMessage ? 'Mengirim...' : 'Kirim Pesan'}</span>
-              </button>
+              </StarBorder>
 
               {sent && (
                 <div className="contact-success-toast" role="status">
@@ -373,10 +383,23 @@ export default function Contact() {
                 </p>
               )}
 
-              <button type="submit" className="contact-submit-btn" disabled={sending}>
+              <StarBorder
+                type="submit"
+                className="contact-submit-btn hero-btn-content"
+                disabled={sending}
+                color="#a1a1aa"
+                trailColor="#ffffff"
+                duration={5}
+                direction="counterclockwise"
+                radius={12}
+                glow={0.4}
+                hover="lap"
+                theme="dark"
+                backgroundColor="transparent"
+              >
                 <Send size={15} aria-hidden="true" />
                 <span>{sending ? 'Mengirim...' : 'Kirim Komentar'}</span>
-              </button>
+              </StarBorder>
             </form>
 
             <div className="contact-comments-list">

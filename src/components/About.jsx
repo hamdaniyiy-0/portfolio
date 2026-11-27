@@ -1,5 +1,6 @@
 import { ArrowUpRight, FileText } from 'lucide-react'
 import { profile } from '../data/portfolio'
+import StarBorder from './StarBorder'
 import './About.css'
 
 /**
@@ -28,16 +29,26 @@ export default function About() {
               {last}
             </span>
           </h2>
-          <a
+          <StarBorder
+            as="a"
             href="/CV.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="about-action about-action-primary"
             aria-label="View CV (PDF, terbuka di tab baru)"
+            className="about-action about-action-primary hero-btn-content"
+            color="#2c67ed"
+            trailColor="#ffffff"
+            duration={4}
+            direction="clockwise"
+            radius={12}
+            glow={0.8}
+            hover="lap"
+            theme="dark"
+            backgroundColor="transparent"
           >
             <FileText size={17} aria-hidden="true" />
             <span>View CV</span>
-          </a>
+          </StarBorder>
         </div>
 
         <div className="about-portrait-stage">
@@ -67,10 +78,23 @@ export default function About() {
             Belajar cepat, rapi dalam detail, dan selalu penasaran — kini menempuh pendidikan di{' '}
             <strong>SMK AL-HADIID 1 CILEUNGSI</strong>.
           </p>
-          <a href="#Portofolio" className="about-action about-action-secondary">
+          <StarBorder
+            as="a"
+            href="#Portofolio"
+            className="about-action about-action-secondary hero-btn-content"
+            color="#a1a1aa"
+            trailColor="#ffffff"
+            duration={5}
+            direction="counterclockwise"
+            radius={12}
+            glow={0.4}
+            hover="lap"
+            theme="dark"
+            backgroundColor="transparent"
+          >
             <span>Lihat Projek</span>
             <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          </StarBorder>
         </div>
       </div>
     </section>

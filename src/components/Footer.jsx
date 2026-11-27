@@ -1,5 +1,6 @@
 import { ArrowUp, CodeXml } from 'lucide-react'
 import { navLinks, socials, profile } from '../data/portfolio'
+import StarBorder from './StarBorder'
 import './Footer.css'
 
 const LABELS = {
@@ -70,10 +71,23 @@ export default function Footer() {
           <p className="footer-copyright">
             © {year} {profile.name}. All rights reserved.
           </p>
-          <button type="button" onClick={goTop} className="footer-back-to-top">
+          <StarBorder
+            type="button"
+            onClick={goTop}
+            className="footer-back-to-top hero-btn-content"
+            color="#a1a1aa"
+            trailColor="#ffffff"
+            duration={5}
+            direction="counterclockwise"
+            radius={99}
+            glow={0.4}
+            hover="lap"
+            theme="dark"
+            backgroundColor="transparent"
+          >
             <span>Kembali ke Atas</span>
             <ArrowUp size={14} aria-hidden="true" />
-          </button>
+          </StarBorder>
         </div>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react'
 import Terminal from './Terminal'
+import StarBorder from './StarBorder'
 import './SpotifySection.css'
 
 /**
@@ -26,14 +27,24 @@ export default function SpotifySection() {
             Rasa Penasaran, ide, dan rasa penasaran selalu menemani proses saya dalam belajar,
             bereksperimen, dan menciptakan sesuatu yang baru.
           </p>
-          <a
-            className="spotify-open-link"
+          <StarBorder
+            as="a"
+            className="spotify-open-link hero-btn-content"
             href="#Portofolio"
             onClick={goToProjects}
+            color="#a1a1aa"
+            trailColor="#ffffff"
+            duration={5}
+            direction="counterclockwise"
+            radius={12}
+            glow={0.4}
+            hover="lap"
+            theme="dark"
+            backgroundColor="transparent"
           >
             <span>Explore My Projects</span>
             <ExternalLink size={16} aria-hidden="true" />
-          </a>
+          </StarBorder>
         </div>
 
         <Terminal />

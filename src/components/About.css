@@ -75,22 +75,23 @@
 .about-action:hover {
   transform: translateY(-2px);
 }
-.about-action-primary {
+/* Tombol CV tetap biru: isi gradien biru dipertahankan, animasi bintang
+   StarBorder tetap tampil di atasnya. */
+.star-border.about-action-primary {
   background: linear-gradient(110deg, #347bff, #2456c9);
   box-shadow: 0 10px 32px #235ccd40;
 }
-.about-action-primary:hover {
+.star-border.about-action-primary:hover {
   background: linear-gradient(110deg, #4c8dff, #3068e0);
 }
+
+/* Visual tombol sekunder ditangani StarBorder; hanya tata letak yang tersisa. */
 .about-action-secondary {
-  color: #64a5ff;
-  background: #030c1d7a;
-  border: 1px solid #3077ff57;
+  color: #eaf2ff;
   margin-top: 13px;
 }
 .about-action-secondary:hover {
-  background: #1b4d9d29;
-  border-color: #3077ffb3;
+  color: #ffffff;
 }
 
 /* ============ Potret ============ */

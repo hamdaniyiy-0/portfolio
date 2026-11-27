@@ -14,6 +14,7 @@ import useReveal from '../hooks/useReveal'
 import BorderGlowCard from './BorderGlowCard'
 import LiquidMetalBorder from './LiquidMetalBorder'
 import Logo from './Logos'
+import StarBorder from './StarBorder'
 import './Portfolio.css'
 
 const TABS = [
@@ -160,14 +161,23 @@ export default function Portfolio() {
                     <div className="portfolio-card-body">
                       <h3 className="portfolio-card-title">{p.title}</h3>
                       <p className="portfolio-card-desc">{p.description}</p>
-                      <button
+                      <StarBorder
                         type="button"
-                        className="portfolio-details-btn"
+                        className="portfolio-details-btn hero-btn-content"
                         onClick={() => openProject(p.title)}
+                        color="#a1a1aa"
+                        trailColor="#ffffff"
+                        duration={5}
+                        direction="counterclockwise"
+                        radius={12}
+                        glow={0.4}
+                        hover="lap"
+                        theme="dark"
+                        backgroundColor="transparent"
                       >
                         <span>Details</span>
                         <ArrowUpRight size={18} aria-hidden="true" />
-                      </button>
+                      </StarBorder>
                     </div>
                   </div>
                 </article>

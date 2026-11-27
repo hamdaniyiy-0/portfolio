@@ -220,27 +220,19 @@
   font-weight: 400;
   line-height: 1.6;
 }
+/* Visual (latar/border/glow) ditangani StarBorder. */
 .portfolio-details-btn {
   color: #e7e7f1;
   width: fit-content;
   min-height: 56px;
   font: inherit;
   cursor: pointer;
-  background: #ffffff0f;
-  border: 1px solid #ffffff17;
-  border-radius: 12px;
-  align-items: center;
   gap: 16px;
   margin-top: auto;
   padding: 0 22px;
   font-size: 1.1rem;
   font-weight: 600;
-  transition: background 0.2s, border-color 0.2s, transform 0.2s;
-  display: inline-flex;
-}
-.portfolio-details-btn:hover {
-  background: #ffffff1c;
-  border-color: #ffffff2e;
+  transition: transform 0.2s;
 }
 .portfolio-details-btn:focus-visible {
   outline-offset: 3px;

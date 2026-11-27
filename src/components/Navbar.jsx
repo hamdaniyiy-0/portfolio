@@ -4,6 +4,7 @@ import { navLinks } from '../data/portfolio'
 import useScrollSpy from '../hooks/useScrollSpy'
 import { isSoundEnabled, setSoundEnabled } from '../lib/sfx'
 import GlassSurface from './GlassSurface'
+import StarBorder from './StarBorder'
 import './Navbar.css'
 
 const IDS = ['Home', 'About', 'Portofolio', 'Contact']
@@ -98,10 +99,24 @@ export default function Navbar({ onNavigate }) {
               )
             })}
             <div className="navbar-mobile-footer">
-              <a href="#Contact" className="navbar-mobile-cta" onClick={(e) => goTo(e, '#Contact')}>
+              <StarBorder
+                as="a"
+                href="#Contact"
+                onClick={(e) => goTo(e, '#Contact')}
+                className="navbar-mobile-cta hero-btn-content"
+                color="#2c67ed"
+                trailColor="#ffffff"
+                duration={4}
+                direction="clockwise"
+                radius={12}
+                glow={0.8}
+                hover="lap"
+                theme="dark"
+                backgroundColor="transparent"
+              >
                 <span>Hubungi Saya</span>
                 <ArrowUpRight size={15} />
-              </a>
+              </StarBorder>
             </div>
           </div>
         </GlassSurface>

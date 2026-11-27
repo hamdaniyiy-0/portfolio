@@ -144,28 +144,21 @@
   color: #818a9b;
 }
 
+/* Visual (latar/border/glow) ditangani StarBorder. */
 .contact-submit-btn {
-  color: #fff;
+  color: #fafafa;
   cursor: pointer;
-  background: #2c67ed;
-  border: none;
-  border-radius: 9px;
   justify-content: center;
-  align-items: center;
-  gap: 8px;
   width: 100%;
   min-height: 46px;
   margin-top: 2px;
   padding: 11px 18px;
   font-size: 0.92rem;
   font-weight: 600;
-  transition: all 0.25s;
-  display: inline-flex;
+  transition: transform 0.25s;
 }
 .contact-submit-btn:hover:not(:disabled) {
-  background: #1d4ed8;
   transform: translateY(-2px);
-  box-shadow: 0 0 30px #2c67ed80;
 }
 .contact-submit-btn:disabled {
   opacity: 0.65;
