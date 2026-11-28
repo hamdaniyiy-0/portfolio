@@ -3,8 +3,7 @@ import useRoute from './hooks/useRoute'
 import useReveal from './hooks/useReveal'
 import { playClick } from './lib/sfx'
 import WelcomeLoader from './components/WelcomeLoader'
-// GhostFibers dihapus karena diganti FluxLines
-import FluxLines from './components/FluxLines' 
+import Particles from './components/Particles'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -50,9 +49,9 @@ export default function App() {
 
   return (
     <div className="app-wrapper">
-      {/* BACKGROUND FLUX LINES */}
+      {/* BACKGROUND PARTICLES */}
       <div 
-        className="flux-lines-background-container" 
+        className="particles-background-container" 
         style={{ 
           position: 'fixed', 
           top: 0, 
@@ -63,17 +62,17 @@ export default function App() {
           pointerEvents: 'none' // Mencegah background menghalangi klik pada konten
         }}
       >
-        <FluxLines
-          colors={['#ffffff', '#ffffff', '#ffffff']}
-          glow={1.6}
-          rimWidth={0.2}
-          lineWidth={1}
-          flowDirection="down"
-          mouseInteraction={false}
-          clickSwirl
-          speed={0.25}
-          turbulence={0.6}
-          shimmer={1}
+        <Particles
+         particleColors={['#ffffff', '#ffffff', '#ffffff']}
+          particleCount={300}
+          particleSpread={15}
+          speed={0.2}
+          particleBaseSize={120}
+          glow={1.0}
+          twinkle={1.0}
+          moveParticlesOnHover={true}
+          hoverEffect="parallax"
+          clickBurst={true}
         />
       </div>
 
