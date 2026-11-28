@@ -114,13 +114,39 @@ button {
   }
 }
 
+/* ============ Galaxy background ============ */
+/* Layer Galaxy menempel penuh di viewport dan berada di belakang konten.
+   `pointer-events: none` memastikan semua tombol/link tetap bisa diklik. */
+.app-wrapper {
+  isolation: isolate;
+  min-height: 100vh;
+  position: relative;
+}
+.galaxy-background-container {
+  z-index: -1;
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #02050b;
+}
+.galaxy-background-container .galaxy-container {
+  width: 100%;
+  height: 100%;
+}
+.main-content {
+  z-index: 0;
+  position: relative;
+}
+
 /* ============ Wadah halaman + latar radikal ============ */
+/* Latar dasar dibuat transparan agar Galaxy di belakangnya terlihat;
+   gradien biru tetap dipertahankan sebagai lapisan suasana. */
 .home-page-container {
   isolation: isolate;
   background:
     radial-gradient(at 12% 18%, #2563eb1a, #0000 34%),
-    radial-gradient(at 88% 48%, #0ea5e912, #0000 30%),
-    #02050b;
+    radial-gradient(at 88% 48%, #0ea5e912, #0000 30%);
   min-height: 100vh;
   position: relative;
 }
@@ -130,8 +156,7 @@ button {
   pointer-events: none;
   background:
     radial-gradient(370px at 18% 20%, #1f4aae57, #0000 70%),
-    radial-gradient(300px at 82% 80%, #1f4bae40, #0000 70%),
-    #02050b;
+    radial-gradient(300px at 82% 80%, #1f4bae40, #0000 70%);
   position: fixed;
   inset: 0;
 }

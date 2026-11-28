@@ -3,7 +3,7 @@ import useRoute from './hooks/useRoute'
 import useReveal from './hooks/useReveal'
 import { playClick } from './lib/sfx'
 import WelcomeLoader from './components/WelcomeLoader'
-import SpaceBackground from './components/SpaceBackground'
+import GhostFibers from './components/GhostFibers'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -48,25 +48,44 @@ export default function App() {
   }
 
   return (
-    <>
-      <SpaceBackground />
-      <Navbar />
-
-      <div className="home-page-container">
-        <div className="home-ui-scale">
-          <main className="home-main">
-            <Hero ready={ready || !loading} />
-            <About />
-            <Experience />
-            <SpotifySection />
-            <Portfolio />
-            <Contact />
-            <Footer />
-          </main>
-        </div>
+    <div className="app-wrapper">
+      {/* BACKGROUND GHOSTFIBERS */}
+      <div className="ghost-fibers-background-container" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}>
+        <GhostFibers
+          glowColor="#6366f1"
+          layers={3}
+          twist={1.2}
+          threads={72}
+          fiberStyle="dots"
+          depthOfField={0.85}
+          hoverEffect="focus"
+          intro={true}
+          mouseInteraction={true}
+          lineColor="#3b82f6"
+          secondaryColor="#6366f1"
+        />
       </div>
 
-      {loading && <WelcomeLoader onDone={finishLoading} />}
-    </>
+      {/* KONTEN WEBSITE */}
+      <div className="main-content" style={{ position: 'relative', zIndex: 1 }}>
+        <Navbar />
+
+        <div className="home-page-container">
+          <div className="home-ui-scale">
+            <main className="home-main">
+              <Hero ready={ready || !loading} />
+              <About />
+              <Experience />
+              <SpotifySection />
+              <Portfolio />
+              <Contact />
+              <Footer />
+            </main>
+          </div>
+        </div>
+
+        {loading && <WelcomeLoader onDone={finishLoading} />}
+      </div>
+    </div>
   )
 }
