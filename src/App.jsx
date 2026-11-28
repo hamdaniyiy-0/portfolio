@@ -3,7 +3,8 @@ import useRoute from './hooks/useRoute'
 import useReveal from './hooks/useReveal'
 import { playClick } from './lib/sfx'
 import WelcomeLoader from './components/WelcomeLoader'
-import GhostFibers from './components/GhostFibers'
+// GhostFibers dihapus karena diganti FluxLines
+import FluxLines from './components/FluxLines' 
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -49,20 +50,30 @@ export default function App() {
 
   return (
     <div className="app-wrapper">
-      {/* BACKGROUND GHOSTFIBERS */}
-      <div className="ghost-fibers-background-container" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}>
-        <GhostFibers
-          glowColor="#6366f1"
-          layers={3}
-          twist={1.2}
-          threads={72}
-          fiberStyle="dots"
-          depthOfField={0.85}
-          hoverEffect="focus"
-          intro={true}
-          mouseInteraction={true}
-          lineColor="#3b82f6"
-          secondaryColor="#6366f1"
+      {/* BACKGROUND FLUX LINES */}
+      <div 
+        className="flux-lines-background-container" 
+        style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          width: '100vw', 
+          height: '100vh', 
+          zIndex: -1,
+          pointerEvents: 'none' // Mencegah background menghalangi klik pada konten
+        }}
+      >
+        <FluxLines
+          colors={['#ffffff', '#ffffff', '#ffffff']}
+          glow={1.6}
+          rimWidth={0.2}
+          lineWidth={1}
+          flowDirection="down"
+          mouseInteraction={false}
+          clickSwirl
+          speed={0.25}
+          turbulence={0.6}
+          shimmer={1}
         />
       </div>
 
