@@ -183,6 +183,13 @@ export const certificates = [
     description:
       'Sertifikasi kemampuan dasar penggunaan Google AI (Gemini) dalam bidang pendidikan.',
   },
+  {
+    title: 'MikroTik Certified Network Associate (MTCNA)',
+    issuer: 'MikroTikls SIA',
+    date: '27 November 2026',
+    image: '/images/mtcna.png', 
+    description: 'Sertifikasi jaringan komputer tingkat associate dari MikroTik.',
+  },
 ]
 
 /* ============ PENGHARGAAN / AWARDS ============
@@ -202,6 +209,13 @@ export const awards = [
     description:
       'Earned a student certification demonstrating knowledge, skills, and basic competencies in using Google AI in education.',
     image: '/images/gemini.png',
+  },
+    {
+    title: 'MikroTik Certified Network Associate (MTCNA)',
+    issuer: 'MikroTikls SIA',
+    description:
+      'Successfully completed the appropriate training and certification requirements, recognized as a MikroTik Certified Network Associate.',
+    image: '/images/mtcna.png',
   },
 ]
 
