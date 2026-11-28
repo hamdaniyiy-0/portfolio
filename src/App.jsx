@@ -64,13 +64,13 @@ export default function App() {
       >
         <Particles
          particleColors={['#ffffff', '#ffffff', '#ffffff']}
-          particleCount={300}
+          particleCount={500}
           particleSpread={15}
           speed={0.2}
-          particleBaseSize={120}
-          glow={1.0}
-          twinkle={1.0}
-          moveParticlesOnHover={true}
+          particleBaseSize={150}
+          glow={1.5}
+          twinkle={0.5}
+          moveParticlesOnHover={false}
           hoverEffect="parallax"
           clickBurst={true}
         />
